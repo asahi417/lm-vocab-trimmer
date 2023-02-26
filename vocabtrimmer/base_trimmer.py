@@ -57,7 +57,7 @@ class MT5VocabTrimmer:
         self.tokenizer.save_pretrained(path_to_save)
 
     def trim_vocab(self, language: str = None, vocab_to_keep: List = None, cache_dir: str = 'cache',
-                   clean_cache: bool = True):
+                   clean_cache: bool = True, path_to_save: str = None):
         """ Trim vocab of the model.
 
         :param language: language of tokens to keep in vocab
@@ -131,6 +131,10 @@ class MT5VocabTrimmer:
                 json.dump(new_sp_token_index, f)
             self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
+        self.model_size_full, self.model_size_embedding = self.show_parameter(log=True)
+        if path_to_save is not None:
+            self.save_pretrained(path_to_save)
+            logging.info(f'model saved at `{path_to_save}`')
+
         if clean_cache:
             shutil.rmtree(model_path)
-        self.model_size_full, self.model_size_embedding = self.show_parameter(log=True)
