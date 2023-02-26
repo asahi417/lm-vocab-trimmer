@@ -1,6 +1,7 @@
 """
 # Evaluation
 ```
+source ~/pyenv/qg/bin/activate
 for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
     for SIZE in 'small' 'base'
