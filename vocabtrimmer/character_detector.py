@@ -5,7 +5,8 @@ import unicodedata as ud
 __all__ = "filter_vocab"
 
 c_en = string.ascii_lowercase
-c_sp = string.punctuation + '0123456789' + '▁'
+c_num = '0123456789'
+c_sp = string.punctuation + '▁'
 range_ja = [
         {"from": ord(u"\u3300"), "to": ord(u"\u33ff")},  # compatibility ideographs
         {"from": ord(u"\ufe30"), "to": ord(u"\ufe4f")},  # compatibility ideographs
@@ -46,7 +47,10 @@ hangul_ranges = [
 def norm(target): return ud.normalize('NFKC', target.lower())
 
 
-def cd_all_symbol(target: str): return all([c in c_sp for c in norm(target)])
+def single_alphabet(target: str): return len(re.findall(fr'[{c_en}]', norm(target))) == 1
+
+
+def cd_all_symbol(target: str): return all([c in c_sp + c_num for c in norm(target)])
 
 
 def cd_eu(target: str):
@@ -64,19 +68,30 @@ def cd_eu(target: str):
 def cd_en(target: str): return bool(re.search(rf"[{c_en}]", norm(target)))
 
 
-def cd_ru(target: str): return bool(re.search('[а-яА-Я]', norm(target)))
+def cd_ru(target: str):
+    if single_alphabet(target):
+        return True
+    return bool(re.search('[а-яА-Я]', norm(target)))
 
 
 def cd_ja(target: str):
+    if single_alphabet(target):
+        return True
     if bool(re.search('[。、！？]', norm(target))):
         return True
     return any(any([r["from"] <= ord(c) <= r["to"] for r in range_ja]) for c in norm(target))
 
 
-def cd_zh(target: str): return any(any([r["from"] <= ord(c) <= r["to"] for r in range_zh]) for c in norm(target))
+def cd_zh(target: str):
+    if single_alphabet(target):
+        return True
+    return any(any([r["from"] <= ord(c) <= r["to"] for r in range_zh]) for c in norm(target))
 
 
-def cd_ko(target: str): return any(any(ord(c) in r for r in hangul_ranges) for c in norm(target))
+def cd_ko(target: str):
+    if single_alphabet(target):
+        return True
+    return any(any(ord(c) in r for r in hangul_ranges) for c in norm(target))
 
 
 def filter_vocab(vocab, language):
