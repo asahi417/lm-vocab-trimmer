@@ -57,6 +57,7 @@ for size in model_size:
             dataset_path=f"lmqg/qg_{la}quad",
             input_type='paragraph_answer',
             output_type='question',
-            language=la
+            language=la,
+            bleu_only=True,
         )
         logging.info(json.dumps(metric, indent=4, sort_keys=True))

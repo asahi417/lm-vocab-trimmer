@@ -12,6 +12,8 @@ from transformers import MT5ForConditionalGeneration, MBartForConditionalGenerat
 from .character_detector import filter_vocab
 
 __all__ = ("MT5VocabTrimmer", "MBartVocabTrimmer", "XLMRobertaVocabTrimmer")
+os.environ["OMP_NUM_THREADS"] = "1"  # to turn off warning message
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
 
 
 def pretty(num): return "{:,}".format(num)
@@ -46,11 +48,12 @@ class MT5VocabTrimmer:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.config = AutoConfig.from_pretrained(model_name)
         if self.config.model_type == 'mt5':
-            self.model = MT5ForConditionalGeneration.from_pretrained(model_name, config=self.config)
+            self.__model_class = MT5ForConditionalGeneration
         elif self.config.model_type == 'mbart':
-            self.model = MBartForConditionalGeneration.from_pretrained(model_name, config=self.config)
+            self.__model_class = MBartForConditionalGeneration
         else:
             raise ValueError(f"model type {self.config.model_type} is not supported.")
+        self.model = self.__model_class.from_pretrained(model_name, config=self.config)
         self.model_size_full, self.model_size_embedding = self.show_parameter(log=True)
 
     def text2text_generation(self, input_text: str):
@@ -110,7 +113,7 @@ class MT5VocabTrimmer:
         # save to tem directory and load it
         self.model.save_pretrained(model_path)
         self.config = AutoConfig.from_pretrained(model_path)
-        self.model = MT5ForConditionalGeneration.from_pretrained(model_path, config=self.config)
+        self.model = self.__model_class.from_pretrained(model_path, config=self.config)
 
         ####################
         # UPDATE TOKENIZER #
