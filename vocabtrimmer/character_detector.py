@@ -4,9 +4,15 @@ import unicodedata as ud
 
 __all__ = "filter_vocab"
 
+currency = ['؋', 'L', '֏', 'ƒ', '$', '$', 'ƒ', '₼', '$', '৳', '$', '$', '$', '฿', 'P', '$', '$', '¥', '$', '₡', '$',
+            '₱', '$', '£', 'Ξ', '€', '$', '£', '£', '₾', '£', '₵', '£', 'D', 'Q', '$', '$', 'L', 'G', '₪', '£', '₹',
+            '﷼', '£', '¥', '៛', '₩', '₩', '$', '₸', '₭', '£', '₨', '$', 'M', 'Ł', 'K', '₮', '₨', '$', '$', '₦', '₨',
+            '$', '﷼', 'K', '₱', '₨', '﷼', '￥', '₽', '﷼', '$', '₨', '$', '£', 'S', '$', '£', '$', '£', 'E', '฿', 'T',
+            '₤', '₺', '$', '₴', '$', '₫', 'Ƀ', '$', '₣', '﷼', 'R']
+c_latin = '¿¡'
 c_en = string.ascii_lowercase
 c_num = '0123456789'
-c_sp = string.punctuation + '▁'
+c_sp = string.punctuation + '—▁–▁́°×»' + "".join(currency)
 range_ja = [
         {"from": ord(u"\u3300"), "to": ord(u"\u33ff")},  # compatibility ideographs
         {"from": ord(u"\ufe30"), "to": ord(u"\ufe4f")},  # compatibility ideographs
@@ -54,6 +60,9 @@ def cd_all_symbol(target: str): return all([c in c_sp + c_num for c in norm(targ
 
 
 def cd_eu(target: str):
+    if bool(re.search(fr'[{c_latin}]', norm(target))):
+        return True
+
     latin_letters = {}
 
     def is_latin(uchr):

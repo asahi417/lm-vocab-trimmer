@@ -14,6 +14,9 @@ from .character_detector import filter_vocab
 __all__ = ("MT5VocabTrimmer", "MBartVocabTrimmer", "XLMRobertaVocabTrimmer")
 os.environ["OMP_NUM_THREADS"] = "1"  # to turn off warning message
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # to turn off warning message
+MBART_LANG_ID = ['ar_AR', 'cs_CZ', 'de_DE', 'en_XX', 'es_XX', 'et_EE', 'fi_FI', 'fr_XX', 'gu_IN', 'hi_IN', 'it_IT',
+                 'ja_XX', 'kk_KZ', 'ko_KR', 'lt_LT', 'lv_LV', 'my_MM', 'ne_NP', 'nl_XX', 'ro_RO', 'ru_RU', 'si_LK',
+                 'tr_TR', 'vi_VN', 'zh_CN']
 
 
 def pretty(num): return "{:,}".format(num)
@@ -82,6 +85,8 @@ class MT5VocabTrimmer:
             vocab.update(filter_vocab(self.tokenizer.vocab, language))
         if vocab_to_keep is not None:
             vocab.update({k: self.tokenizer.vocab[k] for k in vocab_to_keep})
+        if self.config.model_type == 'mbart':
+            vocab.update({k: self.tokenizer.vocab[k] for k in MBART_LANG_ID})
         new_vocab_id = sorted(vocab.values())
         new_vocab = list(vocab.keys())
         model_path = get_cache_dir(cache_dir)
@@ -136,7 +141,10 @@ class MT5VocabTrimmer:
             logging.info(f"num of add tokens: {len(self.tokenizer.additional_special_tokens)}")
             last_id = len(self.tokenizer.vocab) - 1 - len(self.tokenizer.additional_special_tokens)
             new_sp_token_index = {v: n + last_id + 1 for n, v in enumerate(self.tokenizer.additional_special_tokens)}
-            self.tokenizer.additional_special_tokens = []
+            # if self.config.model_type == 'mbart':
+            #     new_sp_token_index = {k: v + 25 for k, v in new_sp_token_index.items()}
+
+            # self.tokenizer.additional_special_tokens = []
             _, _, _, path_added_token, _ = self.tokenizer.save_pretrained(model_path)
             with open(path_added_token, 'w') as f:
                 json.dump(new_sp_token_index, f)
