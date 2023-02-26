@@ -21,7 +21,6 @@ from lmqg import evaluate
 from datasets import load_dataset
 from vocabtrimmer import MT5VocabTrimmer
 
-
 def check_unk(target_tokenizer, target_language):
     dataset = load_dataset(f"lmqg/qg_{target_language}quad", split='test')
     cnt = 0

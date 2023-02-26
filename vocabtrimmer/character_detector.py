@@ -1,9 +1,11 @@
 import string
 import re
 import unicodedata as ud
+from itertools import chain
 
 __all__ = "filter_vocab"
 
+greek_symbols = [chr(c) for c in list(chain(range(0x370, 0x3e2), range(0x3f0, 0x400)))]
 currency = ['؋', 'L', '֏', 'ƒ', '$', '$', 'ƒ', '₼', '$', '৳', '$', '$', '$', '฿', 'P', '$', '$', '¥', '$', '₡', '$',
             '₱', '$', '£', 'Ξ', '€', '$', '£', '£', '₾', '£', '₵', '£', 'D', 'Q', '$', '$', 'L', 'G', '₪', '£', '₹',
             '﷼', '£', '¥', '៛', '₩', '₩', '$', '₸', '₭', '£', '₨', '$', 'M', 'Ł', 'K', '₮', '₨', '$', '$', '₦', '₨',
@@ -12,7 +14,7 @@ currency = ['؋', 'L', '֏', 'ƒ', '$', '$', 'ƒ', '₼', '$', '৳', '$', '$', 
 c_latin = '¿¡'
 c_en = string.ascii_lowercase
 c_num = '0123456789'
-c_sp = string.punctuation + '—▁–▁́°×»' + "".join(currency)
+c_sp = string.punctuation + '¬”§¤ˆ⁄¶“士•⟨⟩∫ˈΔ†′‐−—▁⁄–▁́°×»’«≈‰∞⇨‡→〉《・±’”→》〈〜】יחַיים√′→‚’“ʾ“„’‘”≈ʿ' + "".join(currency) + "".join(greek_symbols)
 range_ja = [
         {"from": ord(u"\u3300"), "to": ord(u"\u33ff")},  # compatibility ideographs
         {"from": ord(u"\ufe30"), "to": ord(u"\ufe4f")},  # compatibility ideographs
