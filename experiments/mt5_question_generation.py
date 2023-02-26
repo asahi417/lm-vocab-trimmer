@@ -1,3 +1,7 @@
+
+"""
+lmqg-eval -m "/home/asahi/lm-vocab-trimmer/model_qg/mt5-small-jaquad-qg-trimmed" -e "/home/asahi/lm-vocab-trimmer/model_qg/mt5-small-jaquad-qg-trimmed" --language "ja" -d "lmqg/qg_jaquad" -i "paragraph_answer" --prediction-aggregation "first" --prediction-level "sentence"
+"""
 import logging
 import json
 import os
@@ -54,10 +58,11 @@ for size in model_size:
             model=model_ckpt,
             max_length=512,
             max_length_output=64,
+            prediction_aggregation="first",
+            prediction_level="sentence",
             dataset_path=f"lmqg/qg_{la}quad",
             input_type='paragraph_answer',
             output_type='question',
             language=la,
-            bleu_only=True,
         )
         logging.info(json.dumps(metric, indent=4, sort_keys=True))
