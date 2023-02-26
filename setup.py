@@ -12,8 +12,8 @@ setup(
     license=LICENSE,
     description='Trimming vocabulary of pre-trained multilingual language models to language localization.',
     url='https://github.com/asahi417/lm-vocab-trmmer',
-    download_url="https://github.com/asahi417/lmppl/archive/v{}.tar.gz".format(VERSION),
-    keywords=['language model', 't5', 'gpt3', 'bert', 'perplexity', 'nlp'],
+    download_url="https://github.com/asahi417/lm-vocab-trmmer/archive/v{}.tar.gz".format(VERSION),
+    keywords=['language model', 't5', 'gpt3', 'bert' 'nlp', 'multilingual', 'efficient-model'],
     long_description=readme,
     long_description_content_type="text/markdown",
     author='Asahi Ushio',
@@ -34,8 +34,7 @@ setup(
         "requests",
         "transformers",
         "sentencepiece",
-        "accelerate",
-        "protobuf<3.20"  # required by DeBERTa models
+        "tokenizers"
     ],
     python_requires='>=3.6',
     # entry_points={
