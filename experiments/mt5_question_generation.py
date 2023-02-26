@@ -48,7 +48,7 @@ for size in model_size:
 
         logging.info(f"Language: {la}, Size: {la}, Model: {model_ckpt}")
         metric = evaluate(
-            export_dir="",
+            export_dir=model_ckpt,
             batch_size=32,
             n_beams=4,
             model=model_ckpt,

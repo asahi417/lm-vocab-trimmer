@@ -8,8 +8,10 @@ from math import prod
 
 import torch
 from tokenizers import models
-from transformers import MT5ForConditionalGeneration, AutoConfig, pipeline, AutoTokenizer
+from transformers import MT5ForConditionalGeneration, MBartForConditionalGeneration, AutoConfig, pipeline, AutoTokenizer
 from .character_detector import filter_vocab
+
+__all__ = ("MT5VocabTrimmer", "MBartVocabTrimmer", "XLMRobertaVocabTrimmer")
 
 
 def pretty(num): return "{:,}".format(num)
@@ -26,7 +28,7 @@ def get_cache_dir(root_dir):
 
 
 def show_parameter(target_model, log: bool = False):
-    param_size_embedding = prod(target_model.encoder.embed_tokens.weight.shape) * 2
+    param_size_embedding = prod(target_model.get_input_embeddings().weight.shape) * 2
     param_size_full = sum(p.numel() for p in target_model.parameters())
     func = logging.info if log else print
     func(f"PARAMETER SUMMARY")
@@ -43,12 +45,16 @@ class MT5VocabTrimmer:
         # load model
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.config = AutoConfig.from_pretrained(model_name)
-        self.model = MT5ForConditionalGeneration.from_pretrained(model_name, config=self.config)
+        if self.config.model_type == 'mt5':
+            self.model = MT5ForConditionalGeneration.from_pretrained(model_name, config=self.config)
+        elif self.config.model_type == 'mbart':
+            self.model = MBartForConditionalGeneration.from_pretrained(model_name, config=self.config)
+        else:
+            raise ValueError(f"model type {self.config.model_type} is not supported.")
         self.model_size_full, self.model_size_embedding = self.show_parameter(log=True)
 
     def text2text_generation(self, input_text: str):
-        pipe = pipeline("text2text-generation", model=self.model, tokenizer=self.tokenizer)
-        return pipe(input_text)
+        return pipeline("text2text-generation", model=self.model, tokenizer=self.tokenizer)(input_text)
 
     def show_parameter(self, log: bool = False): return show_parameter(self.model, log=log)
 
@@ -64,6 +70,7 @@ class MT5VocabTrimmer:
         :param vocab_to_keep: list of tokens to keep in vocab
         :param cache_dir: directory to save tokenizer and model
         :param clean_cache:
+        :param path_to_save: path to save the trimmed model and tokenizer
         :return:
         """
         assert language is not None or vocab_to_keep is not None, "language or vocab_to_keep must be specified."
@@ -78,6 +85,7 @@ class MT5VocabTrimmer:
 
         logging.info(f'trimming vocabulary: {pretty(len(self.tokenizer.vocab))} (original) -> {pretty(len(new_vocab_id))} (target)')
         logging.info(f"cache directory: {model_path}")
+
         ################
         # UPDATE MODEL #
         ################
@@ -138,3 +146,10 @@ class MT5VocabTrimmer:
 
         if clean_cache:
             shutil.rmtree(model_path)
+
+
+MBartVocabTrimmer = MT5VocabTrimmer
+
+
+class XLMRobertaVocabTrimmer:
+    pass
