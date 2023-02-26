@@ -27,7 +27,7 @@ def check_unk(target_tokenizer, target_language):
     cnt = 0
     for i in dataset['paragraph_answer']:
         cnt += int(target_tokenizer.unk_token_id in target_tokenizer.encode(i))
-    return cnt
+    return cnt/len(dataset['paragraph_answer']) * 100
 
 
 def download(filename, url):
