@@ -76,12 +76,11 @@ for size in model_size:
         _stats_tmp["size_rest/trimmed"] = trimmer.model_size_full - trimmer.model_size_embedding
         _stats_tmp["num_unk/trimmed"] = check_unk(trimmer.tokenizer, la)
 
-        print(json.dumps(_stats_tmp, indent=4))
+        logging.info(json.dumps(_stats_tmp, indent=4))
         stats.append(_stats_tmp)
         with open(f"{export_dir}/stats.jsonl", "w") as f:
             f.write('\n'.join([json.dumps(s) for s in stats]))
 
-input()
 logging.info("Evaluate Trimmed QG models")
 metrics = []
 for size in model_size:
