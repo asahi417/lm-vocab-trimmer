@@ -193,11 +193,12 @@ class MT5VocabTrimmer:
         self.tokenizer.backend_tokenizer.model = model_class(**model_state)
 
         # update additional tokens (tokens added after pre-training won't be re-indexed above so need a dirty hack)
-        if len(self.tokenizer.additional_special_tokens) != 0:
+        additional_special_tokens = [i for i in self.tokenizer.additional_special_tokens if i not in MBART_LANG_ID]
+        if len(additional_special_tokens) != 0:
             logging.info(f"updating additional_special_tokens of tokenizer")
-            logging.info(f"num of add tokens: {len(self.tokenizer.additional_special_tokens)}")
-            last_id = len(self.tokenizer.vocab) - 1 - len(self.tokenizer.additional_special_tokens)
-            new_sp_token_index = {v: n + last_id + 1 for n, v in enumerate(self.tokenizer.additional_special_tokens)}
+            logging.info(f"num of add tokens: {len(additional_special_tokens)}")
+            last_id = len(self.tokenizer.vocab) - 1 - len(additional_special_tokens)
+            new_sp_token_index = {v: n + last_id + 1 for n, v in enumerate(additional_special_tokens)}
             _, _, _, path_added_token, _ = self.tokenizer.save_pretrained(model_path)
             with open(path_added_token, 'w') as f:
                 json.dump(new_sp_token_index, f)
