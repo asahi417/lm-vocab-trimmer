@@ -262,7 +262,7 @@ class XLMRobertaVocabTrimmer:
     def save_pretrained(self, path_to_save): save_pretrained(self.model, self.tokenizer, path_to_save)
 
     def trim_vocab(self, language: str = None, vocab_to_keep: List = None, cache_dir: str = 'cache',
-                   clean_cache: bool = True):
+                   clean_cache: bool = False):
         """ Trim vocab of the model.
 
         :param language: language of tokens to keep in vocab
