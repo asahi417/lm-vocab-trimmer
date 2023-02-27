@@ -89,7 +89,7 @@ for size in model_size:
     for la in language:
         model_ckpt = f'{export_dir}/mt5-{size}-{la}quad-qg-trimmed'
 
-        if not os.path.exists(f"{model_ckpt}/metric.first.sentence.paragraph_answer.question.lmqg_qg_{la}quad.default.json"):
+        if not os.path.exists(f"{model_ckpt}/eval/metric.first.sentence.paragraph_answer.question.lmqg_qg_{la}quad.default.json"):
             logging.info(f"Language: {la}, Size: {la}, Model: {model_ckpt}")
             metric = evaluate(
                 export_dir=f"{model_ckpt}/eval",
@@ -106,7 +106,7 @@ for size in model_size:
                 language=la,
             )
             logging.info(json.dumps(metric, indent=4, sort_keys=True))
-        with open(f"{model_ckpt}/metric.first.sentence.paragraph_answer.question.lmqg_qg_{la}quad.default.json") as f:
+        with open(f"{model_ckpt}/eval/metric.first.sentence.paragraph_answer.question.lmqg_qg_{la}quad.default.json") as f:
             metric_trimmed = json.load(f)
         metric_raw = download(
             filename=f"cache/mt5-{size}-{la}quad",
