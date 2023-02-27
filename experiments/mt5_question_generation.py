@@ -22,6 +22,7 @@ from lmqg import evaluate
 from datasets import load_dataset
 from vocabtrimmer import MT5VocabTrimmer
 
+
 def check_unk(target_tokenizer, target_language):
     dataset = load_dataset(f"lmqg/qg_{target_language}quad", split='test')
     cnt = 0
@@ -91,7 +92,7 @@ for size in model_size:
         if not os.path.exists(f"{model_ckpt}/metric.first.sentence.paragraph_answer.question.lmqg_qg_{la}quad.default.json"):
             logging.info(f"Language: {la}, Size: {la}, Model: {model_ckpt}")
             metric = evaluate(
-                export_dir=model_ckpt,
+                export_dir=f"{model_ckpt}/eval",
                 batch_size=32,
                 n_beams=4,
                 model=model_ckpt,
