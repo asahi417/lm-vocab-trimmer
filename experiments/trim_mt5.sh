@@ -1,0 +1,16 @@
+HF_ORG='asahi417'
+#vocabtrimmer-trimming -m "google/mt5-small" -l 'ja' --repo-id "${HF_ORG}/mt5-small-trimmed-ja"
+vocabtrimmer-trimming -m "google/mt5-small" -l 'fr' --repo-id "${HF_ORG}/mt5-small-trimmed-fr"
+vocabtrimmer-trimming -m "google/mt5-small" -l 'it' --repo-id "${HF_ORG}/mt5-small-trimmed-it"
+vocabtrimmer-trimming -m "google/mt5-small" -l 'de' --repo-id "${HF_ORG}/mt5-small-trimmed-de"
+vocabtrimmer-trimming -m "google/mt5-small" -l 'ko' --repo-id "${HF_ORG}/mt5-small-trimmed-ko"
+vocabtrimmer-trimming -m "google/mt5-small" -l 'ru' --repo-id "${HF_ORG}/mt5-small-trimmed-ru"
+vocabtrimmer-trimming -m "google/mt5-small" -l 'es' --repo-id "${HF_ORG}/mt5-small-trimmed-es"
+
+vocabtrimmer-trimming -m "facebook/mbart-large-cc25" -l 'ja' --repo-id "${HF_ORG}/mbart-large-cc25-trimmed-ja"
+vocabtrimmer-trimming -m "facebook/mbart-large-cc25" -l 'fr' --repo-id "${HF_ORG}/mbart-large-cc25-trimmed-fr"
+vocabtrimmer-trimming -m "facebook/mbart-large-cc25" -l 'it' --repo-id "${HF_ORG}/mbart-large-cc25-trimmed-it"
+vocabtrimmer-trimming -m "facebook/mbart-large-cc25" -l 'de' --repo-id "${HF_ORG}/mbart-large-cc25-trimmed-de"
+vocabtrimmer-trimming -m "facebook/mbart-large-cc25" -l 'ko' --repo-id "${HF_ORG}/mbart-large-cc25-trimmed-ko"
+vocabtrimmer-trimming -m "facebook/mbart-large-cc25" -l 'ru' --repo-id "${HF_ORG}/mbart-large-cc25-trimmed-ru"
+vocabtrimmer-trimming -m "facebook/mbart-large-cc25" -l 'es' --repo-id "${HF_ORG}/mbart-large-cc25-trimmed-es"

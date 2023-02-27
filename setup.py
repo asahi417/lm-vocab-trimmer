@@ -37,10 +37,10 @@ setup(
         "tokenizers"
     ],
     python_requires='>=3.6',
-    # entry_points={
-    #     'console_scripts': [
-    #         # 'lmqg-qae = lmqg.lmqg_cl.model_evaluation_qa_based_metric:main_qa_model_training'
-    #     ]
-    # }
+    entry_points={
+        'console_scripts': [
+            'vocabtrimmer-trimming = vocabtrimmer.cl.trimming:main'
+        ]
+    }
 )
 

@@ -37,7 +37,6 @@ def download(filename, url):
             json.load(f_reader)
     except Exception:
         os.makedirs(os.path.dirname(filename), exist_ok=True)
-        print(url)
         with open(filename, "wb") as f_writer:
             r = requests.get(url)
             f_writer.write(r.content)
