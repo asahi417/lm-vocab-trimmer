@@ -40,3 +40,4 @@ def main():
     elif opt.output_dir is not None:  # save model to local
         logging.info(f"saving at {opt.output_dir}")
         trimmer.save_pretrained(opt.output_dir)
+    trimmer.clean_cache()
