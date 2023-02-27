@@ -6,7 +6,7 @@ for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
     for SIZE in 'small' 'base'
     do
-        lmqg-eval -m "model_qg/mt5-${SIZE}-${LA}quad-qg-trimmed" -e "model_qg/mt5-${SIZE}-${LA}quad-qg-trimmed" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+        lmqg-eval -m "model_qg/mt5-${SIZE}-${LA}quad-qg-trimmed" -e "model_qg/mt5-${SIZE}-${LA}quad-qg-trimmed/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
     done
 done
 lmqg-eval -m "model_qg/mt5-small-jaquad-qg-trimmed" -e "model_qg/mt5-small-jaquad-qg-trimmed" --language "ja" -d "lmqg/qg_jaquad" -i "paragraph_answer"
