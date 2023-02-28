@@ -247,6 +247,7 @@ class XLMRobertaVocabTrimmer:
         self.model = self.__model_class.from_pretrained(model_name, config=self.config)
         self.param_size_full_raw, self.param_size_embedding_raw, self.vocab_size_raw = self.show_parameter(log=True)
         self.param_size_full_trimmed, self.param_size_embedding_trimmed, self.vocab_size_trimmed = None, None, None
+        self.cache_dirs = []
 
     def push_to_hub(self, repo_id: str): push_to_hub(self.model, self.model_name, self.tokenizer, repo_id)
 
@@ -263,16 +264,12 @@ class XLMRobertaVocabTrimmer:
 
     def save_pretrained(self, path_to_save): save_pretrained(self.model, self.tokenizer, path_to_save)
 
-    def trim_vocab(self, language: str = None, vocab_to_keep: List = None, cache_dir: str = 'cache',
-                   clean_cache: bool = False):
+    def trim_vocab(self, language: str = None, vocab_to_keep: List = None, cache_dir: str = 'cache'):
         """ Trim vocab of the model.
 
         :param language: language of tokens to keep in vocab
         :param vocab_to_keep: list of tokens to keep in vocab
         :param cache_dir: directory to save tokenizer and model
-        :param clean_cache:
-        :param path_to_save: path to save the trimmed model and tokenizer
-        :return:
         """
         assert language is not None or vocab_to_keep is not None, "language or vocab_to_keep must be specified."
         vocab = dict(zip(self.tokenizer.all_special_tokens, self.tokenizer.all_special_ids))
@@ -283,9 +280,9 @@ class XLMRobertaVocabTrimmer:
         new_vocab_id = sorted(vocab.values())
         new_vocab = list(vocab.keys())
         model_path = get_cache_dir(cache_dir)
+        self.cache_dirs.append(model_path)
 
-        logging.info(
-            f'trimming vocabulary: {pretty(len(self.tokenizer.vocab))} (original) -> {pretty(len(new_vocab_id))} (target)')
+        logging.info(f'trimming vocabulary: {pretty(len(self.tokenizer.vocab))} (original) -> {pretty(len(new_vocab_id))} (target)')
         logging.info(f"cache directory: {model_path}")
 
         ################
@@ -369,5 +366,6 @@ class XLMRobertaVocabTrimmer:
         }
         self.model.config.update({"trimming_stats": stats})
 
-        if clean_cache:
-            safe_rmtree(model_path)
+    def clean_cache(self):
+        for i in self.cache_dirs:
+            safe_rmtree(i)
