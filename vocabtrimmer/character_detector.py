@@ -14,7 +14,7 @@ currency = ['؋', 'L', '֏', 'ƒ', '$', '$', 'ƒ', '₼', '$', '৳', '$', '$', 
 c_latin = '¿¡'
 c_en = string.ascii_lowercase
 c_num = '0123456789'
-c_sp = string.punctuation + '¬”§¤ˆ⁄¶“士•⟨⟩∫ˈΔ†′‐−—▁⁄–▁́°×»’«≈‰∞⇨‡→〉《・±’”→》〈〜】יחַיים√′→‚’“ʾ“„’‘”≈ʿ' + "".join(currency) + "".join(greek_symbols)
+c_sp = string.punctuation + '()『』¬”§¤ˆ⁄¶“士•⟨⟩∫ˈΔ†′‐−—▁⁄–▁́°×»’«≈‰∞⇨‡「」→〉《・±’”→》〈〜】יחַיים√′→‚’“ʾ“„’‘”≈ʿ' + "".join(currency) + "".join(greek_symbols)
 range_ja = [
         {"from": ord(u"\u3300"), "to": ord(u"\u33ff")},  # compatibility ideographs
         {"from": ord(u"\ufe30"), "to": ord(u"\ufe4f")},  # compatibility ideographs
@@ -108,19 +108,23 @@ def cd_ko(target: str):
     return any(any(ord(c) in r for r in hangul_ranges) for c in norm(target))
 
 
+def cd_en_entity(target: str):
+    return target.isupper() and len(target) != 1 and all(_x in c_sp + c_num + c_en for _x in target.lower())
+
+
 def filter_vocab(vocab, language):
     if language.lower() == 'en':
-        return {k: v for k, v in vocab.items() if cd_en(k) or cd_all_symbol(k)}
+        return {k: v for k, v in vocab.items() if cd_en(k) or cd_all_symbol(k) or cd_en_entity(k)}
     elif language.lower() in ['eu', 'it', 'fr', 'de', 'pt', 'es', 'pt']:
-        return {k: v for k, v in vocab.items() if cd_eu(k) or cd_all_symbol(k)}
+        return {k: v for k, v in vocab.items() if cd_eu(k) or cd_all_symbol(k) or cd_en_entity(k)}
     elif language.lower() == 'ar':
-        return {k: v for k, v in vocab.items() if cd_ar(k) or cd_all_symbol(k)}
+        return {k: v for k, v in vocab.items() if cd_ar(k) or cd_all_symbol(k) or cd_en_entity(k)}
     elif language.lower() == 'ko':
-        return {k: v for k, v in vocab.items() if cd_ko(k) or cd_all_symbol(k)}
+        return {k: v for k, v in vocab.items() if cd_ko(k) or cd_all_symbol(k) or cd_en_entity(k)}
     elif language.lower() == 'ja':
-        return {k: v for k, v in vocab.items() if cd_ja(k) or cd_all_symbol(k)}
+        return {k: v for k, v in vocab.items() if cd_ja(k) or cd_all_symbol(k) or cd_en_entity(k)}
     elif language.lower() == 'zh':
-        return {k: v for k, v in vocab.items() if cd_zh(k) or cd_all_symbol(k)}
+        return {k: v for k, v in vocab.items() if cd_zh(k) or cd_all_symbol(k) or cd_en_entity(k)}
     elif language.lower() == 'ru':
-        return {k: v for k, v in vocab.items() if cd_ru(k) or cd_all_symbol(k)}
+        return {k: v for k, v in vocab.items() if cd_ru(k) or cd_all_symbol(k) or cd_en_entity(k)}
     raise ValueError(f'Invalid language: {language}')

@@ -6,7 +6,7 @@ HF_ORG='asahi417'
 # mt5
 for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
-#  vocabtrimmer-trimming -m "google/mt5-small" -l "${LA}" --repo-id "${HF_ORG}/mt5-small-trimmed-${LA}"
+  vocabtrimmer-trimming -m "google/mt5-small" -l "${LA}" --repo-id "${HF_ORG}/mt5-small-trimmed-${LA}"
   vocabtrimmer-trimming -m "google/mt5-base" -l "${LA}" --repo-id "${HF_ORG}/mt5-base-trimmed-${LA}"
 done
 

@@ -13,3 +13,10 @@ Task & Model:
 - mT5 (small): QG-Bench (7 languages)
 - XLM-R (base): Multilingual Tweet Sentiment (ar, en, fr, de, it, pt, es) 
     
+
+## 
+
+## Analysis
+- Stats to track the changes
+    * number of sentences in the dataset that were changed after trimming at tokenization
+    * number of trimmed tokens appeared in the dataset 

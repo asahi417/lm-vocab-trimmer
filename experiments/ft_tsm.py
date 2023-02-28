@@ -24,22 +24,65 @@ from datasets import load_dataset, load_metric
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
 from ray import tune
 
-from readme import get_readme
-
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
-
 os.environ["WANDB_DISABLED"] = "true"
 PARALLEL = bool(int(os.getenv("PARALLEL", 1)))
 RAY_RESULTS = os.getenv("RAY_RESULTS", "ray_results")
-LABEL2ID = {
-        "arts_&_culture": 0,
-        "business_&_entrepreneurs": 1,
-        "pop_culture": 2,
-        "daily_life": 3,
-        "sports_&_gaming": 4,
-        "science_&_technology": 5
-    }
-ID2LABEL = {v: k for k, v in LABEL2ID.items()}
+
+
+
+def get_readme(model_name: str, metric: str, language_model, extra_desc: str = ''):
+    with open(metric) as f:
+      metric = json.load(f)
+    return f"""---
+datasets:
+- cardiffnlp/tweet_topic_single
+metrics:
+- f1
+- accuracy
+model-index:
+- name: {model_name}
+  results:
+  - task:
+      type: text-classification
+      name: Text Classification
+    dataset:
+      name: cardiffnlp/tweet_topic_single
+      type: cardiffnlp/tweet_topic_single
+      args: cardiffnlp/tweet_topic_single
+      split: test_2021 
+    metrics:
+    - name: F1
+      type: f1
+      value: {metric['test/eval_f1']}
+    - name: F1 (macro)
+      type: f1_macro
+      value: {metric['test/eval_f1_macro']}
+    - name: Accuracy
+      type: accuracy
+      value: {metric['test/eval_accuracy']}
+pipeline_tag: text-classification
+widget:
+- text: "I'm sure the {"{@Tampa Bay Lightning@}"} would’ve rather faced the Flyers but man does their experience versus the Blue Jackets this year and last help them a lot versus this Islanders team. Another meat grinder upcoming for the good guys"
+  example_title: "Example 1"
+- text: "Love to take night time bike rides at the jersey shore. Seaside Heights boardwalk. Beautiful weather. Wishing everyone a safe Labor Day weekend in the US." 
+  example_title: "Example 2"
+---
+# {model_name}
+This model is a fine-tuned version of [{language_model}](https://huggingface.co/{language_model}) on the [tweet_topic_single](https://huggingface.co/datasets/cardiffnlp/tweet_topic_single). {extra_desc}
+Fine-tuning script can be found [here](https://huggingface.co/datasets/cardiffnlp/tweet_topic_single/blob/main/lm_finetuning.py). It achieves the following results on the test_2021 set:
+- F1 (micro): {metric['test/eval_f1']}
+- F1 (macro): {metric['test/eval_f1_macro']}
+- Accuracy: {metric['test/eval_accuracy']}
+### Usage
+```python
+from transformers import pipeline
+pipe = pipeline("text-classification", "{model_name}")  
+topic = pipe("Love to take night time bike rides at the jersey shore. Seaside Heights boardwalk. Beautiful weather. Wishing everyone a safe Labor Day weekend in the US.")
+print(topic)
+```
+"""
+
 
 
 def internet_connection(host='http://google.com'):
@@ -72,26 +115,23 @@ def get_metrics():
 
 def main():
     parser = argparse.ArgumentParser(description='Fine-tuning language model.')
-    parser.add_argument('-m', '--model', help='transformer LM', default='roberta-base', type=str)
-    parser.add_argument('-d', '--dataset', help='', default='cardiffnlp/tweet_topic_single', type=str)
-    parser.add_argument('--split-train', help='', required=True, type=str)
-    parser.add_argument('--split-validation', help='', required=True, type=str)
-    parser.add_argument('--split-test', help='', required=True, type=str)
+    parser.add_argument('-o', '--output-dir', help='Directory to output', required=True, type=str)
+    parser.add_argument('-m', '--model', help='transformer LM', default='xlm-roberta-base', type=str)
+    parser.add_argument('-d', '--dataset', help='', default='cardiffnlp/tweet_sentiment_multilingual', type=str)
+    parser.add_argument('-n', '--dataset-name', help='', default='english', type=str)
+    parser.add_argument('--split-train', help='', default='train', type=str)
+    parser.add_argument('--split-validation', help='', default='validation', type=str)
+    parser.add_argument('--split-test', help='', default='test', type=str)
+    parser.add_argument('-r', '--ray-results-dir', help='', default='ray_results', type=str)
     parser.add_argument('-l', '--seq-length', help='', default=128, type=int)
     parser.add_argument('--random-seed', help='', default=42, type=int)
     parser.add_argument('--eval-step', help='', default=50, type=int)
-    parser.add_argument('-o', '--output-dir', help='Directory to output', default='ckpt_tmp', type=str)
     parser.add_argument('-t', '--n-trials', default=10, type=int)
     parser.add_argument('--num-cpus', default=1, type=int)
-    parser.add_argument('--push-to-hub', action='store_true')
-    parser.add_argument('--use-auth-token', action='store_true')
-    parser.add_argument('--hf-organization', default=None, type=str)
-    parser.add_argument('-a', '--model-alias', help='', default=None, type=str)
-    parser.add_argument('--summary-file', default='metric_summary.json', type=str)
+    parser.add_argument('--repo-id', default=None, type=str)
     parser.add_argument('--skip-train', action='store_true')
     parser.add_argument('--skip-eval', action='store_true')
     opt = parser.parse_args()
-    assert opt.summary_file.endswith('.json'), f'`--summary-file` should be a json file {opt.summary_file}'
 
     ray.init(ignore_reinit_error=True, num_cpus=opt.num_cpus)
 
