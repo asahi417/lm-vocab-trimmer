@@ -79,6 +79,9 @@ def cd_eu(target: str):
 def cd_en(target: str): return bool(re.search(rf"[{c_en}]", norm(target)))
 
 
+def cd_ar(target: str): return bool(re.search(r"[\u0621-\u064a\ufb50-\ufdff\ufe70-\ufefc]", norm(target)))
+
+
 def cd_ru(target: str):
     if single_alphabet(target):
         return True
@@ -108,8 +111,10 @@ def cd_ko(target: str):
 def filter_vocab(vocab, language):
     if language.lower() == 'en':
         return {k: v for k, v in vocab.items() if cd_en(k) or cd_all_symbol(k)}
-    elif language.lower() in ['eu', 'it', 'fr', 'de', 'pt', 'es']:
+    elif language.lower() in ['eu', 'it', 'fr', 'de', 'pt', 'es', 'pt']:
         return {k: v for k, v in vocab.items() if cd_eu(k) or cd_all_symbol(k)}
+    elif language.lower() == 'ar':
+        return {k: v for k, v in vocab.items() if cd_ar(k) or cd_all_symbol(k)}
     elif language.lower() == 'ko':
         return {k: v for k, v in vocab.items() if cd_ko(k) or cd_all_symbol(k)}
     elif language.lower() == 'ja':

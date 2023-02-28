@@ -64,17 +64,7 @@ for size in model_size:
 
         _stats_tmp = {"model": f'lmqg/mt5-{size}-{la}quad-qg'}
         trimmer = MT5VocabTrimmer(f'lmqg/mt5-{size}-{la}quad-qg')
-        _stats_tmp["size_full/raw"] = trimmer.model_size_full
-        _stats_tmp["size_vocab/raw"] = trimmer.model_size_embedding
-        _stats_tmp["size_rest/raw"] = trimmer.model_size_full - trimmer.model_size_embedding
-        _stats_tmp["num_unk/raw"] = check_unk(trimmer.tokenizer, la)
-
-        trimmer.trim_vocab(language=la, path_to_save=model_ckpt)
-        _stats_tmp["size_full/trimmed"] = trimmer.model_size_full
-        _stats_tmp["size_vocab/trimmed"] = trimmer.model_size_embedding
-        _stats_tmp["size_rest/trimmed"] = trimmer.model_size_full - trimmer.model_size_embedding
-        _stats_tmp["num_unk/trimmed"] = check_unk(trimmer.tokenizer, la)
-
+        trimmer.trim_vocab(language=la)
         logging.info(json.dumps(_stats_tmp, indent=4))
         stats.append(_stats_tmp)
         with open(f"{export_dir}/stats.jsonl", "w") as f:
