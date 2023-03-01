@@ -1,0 +1,1 @@
+vocabtrimmer-mining -m "google/mt5-small" -s 500 -d "mc4" -n "ja"
