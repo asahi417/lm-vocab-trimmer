@@ -165,7 +165,7 @@ class VocabTrimmer:
         # vocab mining
         dataset_name = language if dataset == 'mc4' and dataset_name is None else dataset_name
         new_vocab = vocab_miner(
-            model=self.model,
+            model=self.model_name,
             language=language,
             dataset=dataset,
             dataset_column=dataset_column,
