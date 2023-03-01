@@ -51,19 +51,19 @@ def push_to_hub(model, source_model, tokenizer, repo_id: str):
     stats = [
         {
             "model": source_model,
-            "parameter_size_full": pretty(model.config.vocabtrimmer['mining_config']["parameter_size_full/raw"]),
-            "parameter_size_embedding": pretty(model.config.vocabtrimmer['mining_config']["parameter_size_embedding/raw"]),
-            "vocab_size": pretty(model.config.vocabtrimmer['mining_config']["vocab_size/raw"]),
+            "parameter_size_full": pretty(model.config.vocabtrimmer['stats']["parameter_size_full/raw"]),
+            "parameter_size_embedding": pretty(model.config.vocabtrimmer['stats']["parameter_size_embedding/raw"]),
+            "vocab_size": pretty(model.config.vocabtrimmer['stats']["vocab_size/raw"]),
             "compression_rate_full": 100,
             "compression_rate_embedding": 100,
         },
         {
             "model": repo_id,
-            "parameter_size_full": pretty(model.config.vocabtrimmer['mining_config']["parameter_size_full/trimmed"]),
-            "parameter_size_embedding": pretty(model.config.vocabtrimmer['mining_config']["parameter_size_embedding/trimmed"]),
-            "vocab_size": pretty(model.config.vocabtrimmer['mining_config']["vocab_size/trimmed"]),
-            "compression_rate_full": round(model.config.vocabtrimmer['mining_config']["compression_rate_full"], 2),
-            "compression_rate_embedding": round(model.config.vocabtrimmer['mining_config']["compression_rate_embedding"], 2),
+            "parameter_size_full": pretty(model.config.vocabtrimmer['stats']["parameter_size_full/trimmed"]),
+            "parameter_size_embedding": pretty(model.config.vocabtrimmer['stats']["parameter_size_embedding/trimmed"]),
+            "vocab_size": pretty(model.config.vocabtrimmer['stats']["vocab_size/trimmed"]),
+            "compression_rate_full": round(model.config.vocabtrimmer['stats']["compression_rate_full"], 2),
+            "compression_rate_embedding": round(model.config.vocabtrimmer['stats']["compression_rate_embedding"], 2),
         }
     ]
     df = pd.DataFrame(stats)
