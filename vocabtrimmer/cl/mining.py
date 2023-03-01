@@ -14,7 +14,7 @@ def main():
     parser.add_argument('-d', '--dataset', default='mc4', type=str)
     parser.add_argument('-n', '--dataset-name', default='ja', type=str)
     parser.add_argument('-s', '--dataset-split', default='validation', type=str)
-    parser.add_argument('-l', '--language', help='language code of tokens to keep', required=True, type=str)
+    parser.add_argument('-l', '--language', help='language code of tokens to keep', default="ja", type=str)
     parser.add_argument('-o', '--output-dir', help='directly to save model', default='data/ja', type=str)
     parser.add_argument('--dataset-column', default='text', type=str)
     opt = parser.parse_args()
@@ -27,6 +27,5 @@ def main():
         dataset_split=opt.dataset_split,
         dataset_name=opt.dataset_name,
         chunk=opt.chunk_size,
-        cache_file_vocab=f"{opt.output_dir}/vocab.json",
         cache_file_frequency=f"{opt.output_dir}/frequency.json"
     )
