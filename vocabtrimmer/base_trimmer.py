@@ -73,8 +73,8 @@ def push_to_hub(model, source_model, tokenizer, repo_id: str):
              f"vocabulary of language models to compress the model size.\n" \
              "Following table shows a summary of the trimming process.\n\n"
     readme += df.T.to_markdown()
-    readme += f"\nFollwing table shows the parameter used to trim vocabulary.\n\n " \
-              f"{pd.DataFrame([model.config.vocabtrimmer['mining_config']]).T.to_markdown()}"
+    readme += f"\n\n\nFollowing table shows the parameter used to trim vocabulary.\n\n " \
+              f"{pd.DataFrame([model.config.vocabtrimmer['mining_config']]).to_markdown(index=False)}"
     repo = Repository(os.path.basename(repo_id), repo_id)
     with open(f"{os.path.basename(repo_id)}/README.md", "w") as f:
         f.write(readme)
