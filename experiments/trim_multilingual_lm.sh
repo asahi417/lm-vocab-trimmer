@@ -25,11 +25,12 @@ for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
   for SIZE in "small" "base"
   do
-#    vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "lmqg/mt5-${SIZE}-${LA}quad-qg-trimmed"
+    vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "lmqg/mt5-${SIZE}-${LA}quad-qg-trimmed" -p "ckpts/mt5-${SIZE}-${LA}quad-qg-trimmed" -v 60000
     git clone "https://huggingface.co/lmqg/mt5-${SIZE}-${LA}quad-qg-trimmed"
     rm -rf "mt5-${SIZE}-${LA}quad-qg-trimmed/eval"
     lmqg-eval -m "mt5-${SIZE}-${LA}quad-qg-trimmed" -e "mt5-${SIZE}-${LA}quad-qg-trimmed/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
     cd "mt5-${SIZE}-${LA}quad-qg-trimmed" && git add . && git commit -m "add eval" && git push && cd ..
+    rm -rf "mt5-${SIZE}-${LA}quad-qg-trimmed"
   done
 done
 
