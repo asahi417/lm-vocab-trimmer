@@ -70,6 +70,9 @@ def vocab_refine_on_data(
 
 
 if __name__ == '__main__':
-    vocab_refine_on_data(language="ja", dataset_name="ja", cache_file_vocab="mc4/ja_vocab.txt", cache_file_frequency="mc4/ja_frequency.json")
+    vocab_refine_on_data(language="ja",
+                         dataset_name="ja",
+                         cache_file_vocab="data/ja_vocab.txt",
+                         cache_file_frequency="data/ja_frequency.json")
 
 
