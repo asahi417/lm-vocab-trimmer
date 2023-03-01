@@ -195,7 +195,7 @@ def vocab_miner(model: str = 'google/mt5-small', language: str = 'ja', dataset: 
         logging.info(f"keep {pretty(n_ool_token)} tokens from out-of-language tokens")
         ool_tokens = sorted([x for x, y in zip(freq, flag_native) if not y], key=lambda x: x[1], reverse=True)[:n_ool_token]
         final_tokens = [x for x, y in zip(freq, flag_native) if y] + ool_tokens
-    new_vocab = {x[0]: x[1] for x in final_tokens}
+    new_vocab = {x[0]: x[2] for x in final_tokens}
     logging.info(f"save vocab file at {cache_file_vocab}")
     with open(cache_file_vocab, 'w') as f:
         json.dump(new_vocab, f)
