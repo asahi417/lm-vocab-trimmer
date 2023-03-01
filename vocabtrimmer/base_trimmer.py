@@ -51,22 +51,21 @@ def push_to_hub(model, source_model, tokenizer, repo_id: str):
     stats = [
         {
             "model": source_model,
-            "parameter_size_full": pretty(model.config.trimming_stats["parameter_size_full/raw"]),
-            "parameter_size_embedding": pretty(model.config.trimming_stats["parameter_size_embedding/raw"]),
-            "vocab_size": pretty(model.config.trimming_stats["vocab_size/raw"]),
+            "parameter_size_full": pretty(model.config.vocabtrimmer['trimming_stats']["parameter_size_full/raw"]),
+            "parameter_size_embedding": pretty(model.config.vocabtrimmer['trimming_stats']["parameter_size_embedding/raw"]),
+            "vocab_size": pretty(model.config.vocabtrimmer['trimming_stats']["vocab_size/raw"]),
             "compression_rate_full": 100,
             "compression_rate_embedding": 100,
         },
         {
             "model": repo_id,
-            "parameter_size_full": pretty(model.config.trimming_stats["parameter_size_full/trimmed"]),
-            "parameter_size_embedding": pretty(model.config.trimming_stats["parameter_size_embedding/trimmed"]),
-            "vocab_size": pretty(model.config.trimming_stats["vocab_size/trimmed"]),
-            "compression_rate_full": round(model.config.trimming_stats["compression_rate_full"], 2),
-            "compression_rate_embedding": round(model.config.trimming_stats["compression_rate_embedding"], 2),
+            "parameter_size_full": pretty(model.config.vocabtrimmer['trimming_stats']["parameter_size_full/trimmed"]),
+            "parameter_size_embedding": pretty(model.config.vocabtrimmer['trimming_stats']["parameter_size_embedding/trimmed"]),
+            "vocab_size": pretty(model.config.vocabtrimmer['trimming_stats']["vocab_size/trimmed"]),
+            "compression_rate_full": round(model.config.vocabtrimmer['trimming_stats']["compression_rate_full"], 2),
+            "compression_rate_embedding": round(model.config.vocabtrimmer['trimming_stats']["compression_rate_embedding"], 2),
         }
     ]
-
     df = pd.DataFrame(stats)
     df.index = df.pop("model")
     readme = f"# Vocabulary Trimmed [{source_model}]({link}): `{repo_id}` \n" \
@@ -74,6 +73,8 @@ def push_to_hub(model, source_model, tokenizer, repo_id: str):
              f"vocabulary of language models to compress the model size.\n" \
              "Following table shows a summary of the trimming process.\n\n"
     readme += df.T.to_markdown()
+    readme += f"\nFollwing table shows the parameter used to trim vocabulary.\n\n " \
+              f"{pd.DataFrame([model.config.vocabtrimmer['mining_config']]).T.to_markdown()}"
     repo = Repository(os.path.basename(repo_id), repo_id)
     with open(f"{os.path.basename(repo_id)}/README.md", "w") as f:
         f.write(readme)
