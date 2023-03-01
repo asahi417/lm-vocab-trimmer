@@ -6,9 +6,9 @@ from itertools import chain
 import numpy as np
 from transformers import AutoTokenizer
 from datasets import load_dataset
-from vocabtrimmer import character_detector
-from vocabtrimmer.base_trimmer import get_cache_dir
 from collections import defaultdict
+from . import character_detector
+from .base_trimmer import get_cache_dir
 
 
 def get_token_freq(tokens):
@@ -18,7 +18,7 @@ def get_token_freq(tokens):
     return fq
 
 
-def vocab_refine_on_data(
+def vocab_miner(
         model: str = 'google/mt5-small',
         language: str = 'ja',
         dataset: str = 'mc4',
@@ -67,12 +67,5 @@ def vocab_refine_on_data(
 
     with open(cache_file_frequency) as f:
         freq = json.load(f)
-
-
-if __name__ == '__main__':
-    vocab_refine_on_data(language="ja",
-                         dataset_name="ja",
-                         cache_file_vocab="data/ja_vocab.txt",
-                         cache_file_frequency="data/ja_frequency.json")
 
 

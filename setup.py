@@ -39,7 +39,8 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'vocabtrimmer-trimming = vocabtrimmer.cl.trimming:main'
+            'vocabtrimmer-trimming = vocabtrimmer.cl.trimming:main',
+            'vocabtrimmer-mining = vocabtrimmer.cl.mining:main'
         ]
     }
 )
