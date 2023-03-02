@@ -156,6 +156,8 @@ def vocab_miner(model: str = 'google/mt5-small', language: str = 'ja', dataset: 
         with open(cache_file_vocab) as f:
             return json.load(f)
 
+    os.makedirs(os.path.dirname(cache_file_frequency), exist_ok=True)
+    os.makedirs(os.path.dirname(cache_file_vocab), exist_ok=True)
     tokenizer = AutoTokenizer.from_pretrained(model)
     if not os.path.exists(cache_file_frequency):
         os.makedirs(os.path.dirname(cache_file_frequency), exist_ok=True)
