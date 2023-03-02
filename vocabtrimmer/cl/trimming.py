@@ -19,7 +19,7 @@ def main():
     # vocab mining parameter
     parser.add_argument('-c', '--chunk', help="chunk size at mining", default=500, type=int)
     parser.add_argument('-v', '--target-vocab-size', help="vocab size after mining", default=70000, type=int)
-    parser.add_argument('-d', '--dataset', help='huggingface dataset to be used for mining', default='mc4', type=str)
+    parser.add_argument('-d', '--dataset', help='huggingface dataset to be used for mining', default='vocabtrimmer/mc4_validation', type=str)
     parser.add_argument('-n', '--dataset-name', help='name of the dataset', default=None, type=str)
     parser.add_argument('-s', '--dataset-split', help='split of the dataset', default='validation', type=str)
     parser.add_argument('--dataset-column', help="column of the dataset containing text for mining", default='text', type=str)
