@@ -142,7 +142,7 @@ def vocab_miner(model: str = 'google/mt5-small', language: str = 'ja', dataset: 
     :return: a dictionary of {token: token_id}
     """
 
-    dataset_name = language if dataset == 'mc4' and dataset_name is None else dataset_name
+    dataset_name = language if dataset in ['mc4', 'vocabtrimmer/mc4_validation'] and dataset_name is None else dataset_name
     logging.info(f"[DATASET INFO] dataset: {dataset}, name: {dataset_name}, split: {dataset_split}, column: {dataset_column}")
     logging.info(f"[MINING INFO] language: {language}, model: {model}, chunk: {chunk}")
 
