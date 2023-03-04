@@ -4,7 +4,8 @@ for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
   for SIZE in "small" "base"
   do
-    for TARGET in 15000 30000 45000 60000 75000
+    for TARGET in 15000 30000 45000 60000 75000 90000
+#    for TARGET in 30000 45000 60000 75000 90000
     do
       MODEL="mt5-${SIZE}-trimmed-${LA}-${TARGET}-${LA}quad-qg"
       lmqg-train-search -c "lmqg_output/trimmed_qg/${MODEL}" -d "lmqg/qg_${LA}quad" -m "${HF_ORG}/mt5-${SIZE}-trimmed-${LA}-${TARGET}" -b 16 -g 4 --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1

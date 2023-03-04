@@ -145,7 +145,7 @@ class VocabTrimmer:
 
     def trim_vocab(self, language: str, path_to_save: str, dataset: str = 'mc4', dataset_column: str = 'text',
                    dataset_name: str = None, dataset_split: str = 'train', tokens_to_keep: List = None,
-                   target_vocab_size: int = 70000, min_frequency: int = 2, chunk: int = 1000,
+                   target_vocab_size: int = None, min_frequency: int = 2, chunk: int = 1000,
                    cache_file_vocab: str = None, cache_file_frequency: str = None):
         """ Vocabulary trimming along with vocabulary mining on corpus
 

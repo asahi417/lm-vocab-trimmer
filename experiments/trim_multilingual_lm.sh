@@ -2,13 +2,25 @@
 # FOUNDATION MODELS #
 #####################
 # mt5
+
 HF_ORG='vocabtrimmer'
-#for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
-for LA in 'ru' 'fr' 'de' 'es' 'it'
+for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
   for SIZE in "small" "base"
   do
-    for TARGET in 15000 30000 45000 60000 75000
+    vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "${HF_ORG}/mt5-${SIZE}-trimmed-${LA}" -p "ckpts/mt5-${SIZE}-trimmed-${LA}"
+  done
+done
+
+
+HF_ORG='vocabtrimmer'
+LA="ko"
+for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
+do
+  for SIZE in "small" "base"
+  do
+#    for TARGET in 15000 30000 45000 60000 75000 90000 120000 150000 180000 210000
+    for TARGET in 90000 120000 150000 180000 210000
     do
       MODEL="mt5-${SIZE}-trimmed-${LA}-${TARGET}"
       vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "${HF_ORG}/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
@@ -17,14 +29,15 @@ do
 done
 
 # xlm-r
+HF_ORG='vocabtrimmer'
 for LA in 'ja' 'fr' 'de' 'es' 'it' 'ar' 'pt'
 do
   for SIZE in "base" "large"
   do
     for TARGET in 15000 30000 45000 60000 75000
     do
-      MODEL="mt5-${SIZE}-trimmed-${LA}-${TARGET}"
-      vocabtrimmer-trimming -m "xlm-roberta-${SIZE}" -l "${LA}" --repo-id "${HF_ORG}/xlm-roberta-base-trimmed-${LA}" -p "ckpts/${MODEL}" -v ${TARGET}
+      MODEL="xlm-roberta-${SIZE}-trimmed-${LA}-${TARGET}"
+      vocabtrimmer-trimming -m "xlm-roberta-${SIZE}" -l "${LA}" --repo-id "${HF_ORG}/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
     done
   done
 done
@@ -35,12 +48,11 @@ done
 #################
 # mt5: NEED TO INSTALL `lmqg` https://github.com/asahi417/lm-question-generation
 HF_ORG='vocabtrimmer'
-#for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
-for LA in 'ru' 'fr' 'de' 'es' 'it'
+for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
   for SIZE in "small" "base"
   do
-    for TARGET in 15000 30000 45000 60000 75000
+    for TARGET in 15000 30000 45000 60000 75000 90000 120000 150000 180000 210000
     do
       MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
       vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "${HF_ORG}/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}

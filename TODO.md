@@ -16,4 +16,17 @@ Task & Model:
 ## Analysis
 - Stats to track the changes
     * number of sentences in the dataset that were changed after trimming at tokenization
-    * number of trimmed tokens appeared in the dataset 
+    * number of trimmed tokens appeared in the dataset
+  
+## Note
+```python
+mt5_max_vocab = {
+  "ja": 125904,
+  "ko":  73357,
+  "ru": 147756,
+  "fr": 131087,
+  "it": 111056,
+  "es": 131105,
+  "de": 137617
+}
+```

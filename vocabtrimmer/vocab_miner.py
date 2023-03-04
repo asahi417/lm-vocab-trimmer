@@ -124,7 +124,7 @@ def update_fq(tokens, fq):
 
 def vocab_miner(model: str = 'google/mt5-small', language: str = 'ja', dataset: str = 'mc4',
                 dataset_column: str = 'text', dataset_name: str = None, dataset_split: str = 'train',
-                target_vocab_size: int = 70000, min_frequency: int = 2, chunk: int = 1000,
+                target_vocab_size: int = None, min_frequency: int = 2, chunk: int = 1000,
                 cache_file_vocab: str = None, cache_file_frequency: str = None):
     """ Mining language specific vocabulary from corpus
 
@@ -186,9 +186,10 @@ def vocab_miner(model: str = 'google/mt5-small', language: str = 'ja', dataset: 
         flag_native = [is_language(x[0], language) for x in freq]  # flag whether the token is native language
         logging.info(f"Number of native token: {pretty(sum(flag_native))}/{pretty(len(freq))} ({round(sum(flag_native) / len(freq) * 100, 2)}%)")
 
-    if target_vocab_size >= len(freq):
-        logging.info("vocabulary size is already smaller than the target_vocab_size")
+    if target_vocab_size is None:
         final_tokens = freq
+    elif target_vocab_size >= len(freq):
+        raise ValueError("vocabulary size is already smaller than the target_vocab_size")
     elif target_vocab_size < sum(flag_native):
         logging.warning("target_vocab_size is smaller than the native language token")
         final_tokens = sorted([x for x, y in zip(freq, flag_native) if y], key=lambda x: x[1], reverse=True)[:target_vocab_size]
