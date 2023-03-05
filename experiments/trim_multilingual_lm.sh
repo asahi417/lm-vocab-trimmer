@@ -2,43 +2,53 @@
 # FOUNDATION MODELS #
 #####################
 # mt5
-
-HF_ORG='vocabtrimmer'
 for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
   for SIZE in "small" "base"
   do
-    vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "${HF_ORG}/mt5-${SIZE}-trimmed-${LA}" -p "ckpts/mt5-${SIZE}-trimmed-${LA}"
+    vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "vocabtrimmer/mt5-${SIZE}-trimmed-${LA}" -p "ckpts/mt5-${SIZE}-trimmed-${LA}"
   done
 done
 
-
-HF_ORG='vocabtrimmer'
-LA="ko"
-for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
+for LA in 'fr' 'de' 'es' 'it'
 do
   for SIZE in "small" "base"
   do
-#    for TARGET in 15000 30000 45000 60000 75000 90000 120000 150000 180000 210000
-    for TARGET in 90000 120000 150000 180000 210000
+    for TARGET in 15000 30000 45000 60000
     do
-      MODEL="mt5-${SIZE}-trimmed-${LA}-${TARGET}"
-      vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "${HF_ORG}/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+      vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "vocabtrimmer/mt5-${SIZE}-trimmed-${LA}-${TARGET}" -p "ckpts/mt5-${SIZE}-trimmed-${LA}-${TARGET}" -v "${TARGET}"
     done
   done
 done
 
-# xlm-r
-HF_ORG='vocabtrimmer'
-for LA in 'ja' 'fr' 'de' 'es' 'it' 'ar' 'pt'
+for LA in 'ja' 'ru' 'fr' 'de' 'es' 'it'
 do
-  for SIZE in "base" "large"
+  for SIZE in "small" "base"
   do
-    for TARGET in 15000 30000 45000 60000 75000
+    for TARGET in 75000 90000 105000
     do
-      MODEL="xlm-roberta-${SIZE}-trimmed-${LA}-${TARGET}"
-      vocabtrimmer-trimming -m "xlm-roberta-${SIZE}" -l "${LA}" --repo-id "${HF_ORG}/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+      vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "vocabtrimmer/mt5-${SIZE}-trimmed-${LA}-${TARGET}" -p "ckpts/mt5-${SIZE}-trimmed-${LA}-${TARGET}" -v "${TARGET}"
     done
+  done
+done
+
+for LA in 'ja' 'ru' 'fr' 'de' 'es'
+do
+  for SIZE in "small" "base"
+  do
+    vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "vocabtrimmer/mt5-${SIZE}-trimmed-${LA}-120000" -p "ckpts/mt5-${SIZE}-trimmed-${LA}-120000" -v 120000
+  done
+done
+
+
+
+
+TARGET=105000
+for LA in 'ja' 'ru' 'fr' 'de' 'es' 'it'
+do
+  for SIZE in "small" "base"
+  do
+    vocabtrimmer-trimming -m "google/mt5-${SIZE}" -l "${LA}" --repo-id "vocabtrimmer/mt5-${SIZE}-trimmed-${LA}-${TARGET}" -p "ckpts/mt5-${SIZE}-trimmed-${LA}-${TARGET}" -v "${TARGET}"
   done
 done
 
@@ -47,20 +57,225 @@ done
 # TASK SPECIFIC #
 #################
 # mt5: NEED TO INSTALL `lmqg` https://github.com/asahi417/lm-question-generation
-HF_ORG='vocabtrimmer'
+for LA in  'ru' 'fr' 'de' 'es' 'it'
+do
+  SIZE="base"
+  MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed"
+  vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}"
+  git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+  rm -rf "${MODEL}/eval"
+  lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+  cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+  rm -rf "${MODEL}"
+  rm -rf "ckpts/${MODEL}"
+done
+for LA in  'ru' 'fr' 'de' 'es' 'it'
+do
+  SIZE="small"
+  MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed"
+  vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}"
+  git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+  rm -rf "${MODEL}/eval"
+  lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+  cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+  rm -rf "${MODEL}"
+  rm -rf "ckpts/${MODEL}"
+done
+
+
+for LA in 'ja' 'ko' 'ru' 'it'
+do
+  SIZE="small"
+  for TARGET in 15000 30000 45000 60000
+  do
+    MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
+    vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+    git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+    rm -rf "${MODEL}/eval"
+    lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+    cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+    rm -rf "${MODEL}"
+    rm -rf "ckpts/${MODEL}"
+  done
+done
+
+for LA in 'ru' 'it'
+do
+  SIZE="small"
+  for TARGET in 75000 90000
+  do
+    MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
+    vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+    git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+    rm -rf "${MODEL}/eval"
+    lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+    cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+    rm -rf "${MODEL}"
+    rm -rf "ckpts/${MODEL}"
+  done
+done
+
+LA="es"
+SIZE="small"
+TARGET=90000
+MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
+vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+rm -rf "${MODEL}/eval"
+lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+rm -rf "${MODEL}"
+rm -rf "ckpts/${MODEL}"
+
+
+LA="es"
+SIZE="small"
+for TARGET in 15000 30000 45000 60000
+do
+  MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
+  vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+  git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+  rm -rf "${MODEL}/eval"
+  lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+  cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+  rm -rf "${MODEL}"
+  rm -rf "ckpts/${MODEL}"
+done
+
+LA='ja'
+SIZE="small"
+TARGET=75000
+MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
+vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+rm -rf "${MODEL}/eval"
+lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+rm -rf "${MODEL}"
+rm -rf "ckpts/${MODEL}"
+
+for LA in 'de' 'es' 'it'
+do
+  SIZE="small"
+
+  MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-120000"
+  vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v 120000
+  git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+  rm -rf "${MODEL}/eval"
+  lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+  cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+  rm -rf "${MODEL}"
+  rm -rf "ckpts/${MODEL}"
+done
+
+TARGET=105000
+SIZE='small'
+for LA in 'ja' 'ru' 'fr' 'de' 'es' 'it'
+do
+  MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
+  vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+  git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+  rm -rf "${MODEL}/eval"
+  lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+  cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+  rm -rf "${MODEL}"
+  rm -rf "ckpts/${MODEL}"
+done
+
+
+
+
+
+
+
 for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
 do
   for SIZE in "small" "base"
   do
-    for TARGET in 15000 30000 45000 60000 75000 90000 120000 150000 180000 210000
+    MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed"
+    vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}"
+    git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+    rm -rf "${MODEL}/eval"
+    lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+    cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+    rm -rf "${MODEL}"
+    rm -rf "ckpts/${MODEL}"
+  done
+done
+
+for LA in 'ja' 'ko' 'ru' 'fr' 'de' 'es' 'it'
+do
+  for SIZE in "small" "base"
+  do
+    for TARGET in 15000 30000 45000 60000
     do
       MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
-      vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "${HF_ORG}/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
-      git clone "https://huggingface.co/${HF_ORG}/${MODEL}"
+      vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+      git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
       rm -rf "${MODEL}/eval"
       lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
       cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
       rm -rf "${MODEL}"
+      rm -rf "ckpts/${MODEL}"
     done
   done
 done
+
+
+for LA in 'ja' 'ru' 'fr' 'de' 'es' 'it'
+do
+  for SIZE in "small" "base"
+  do
+    for TARGET in 75000 90000 105000
+    do
+      MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-${TARGET}"
+      vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+      git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+      rm -rf "${MODEL}/eval"
+      lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+      cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+      rm -rf "${MODEL}"
+      rm -rf "ckpts/${MODEL}"
+    done
+  done
+done
+
+for LA in 'ja' 'ru' 'fr' 'de' 'es' 'it'
+do
+  for SIZE in "small" "base"
+  do
+    MODEL="mt5-${SIZE}-${LA}quad-qg-trimmed-120000"
+    vocabtrimmer-trimming -m "lmqg/mt5-${SIZE}-${LA}quad-qg" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v 120000
+    git clone "https://huggingface.co/vocabtrimmer/${MODEL}"
+    rm -rf "${MODEL}/eval"
+    lmqg-eval -m "${MODEL}" -e "${MODEL}/eval" --language "${LA}" -d "lmqg/qg_${LA}quad" -i "paragraph_answer"
+    cd "${MODEL}" && git add . && git commit -m "add eval" && git push && cd ..
+    rm -rf "${MODEL}"
+    rm -rf "ckpts/${MODEL}"
+  done
+done
+
+
+
+
+
+
+#
+#
+#
+#
+#
+#
+#
+## xlm-r
+#for LA in 'ja' 'fr' 'de' 'es' 'it' 'ar' 'pt'
+#do
+#  for SIZE in "base" "large"
+#  do
+#    for TARGET in 15000 30000 45000 60000 75000
+#    do
+#      MODEL="xlm-roberta-${SIZE}-trimmed-${LA}-${TARGET}"
+#      vocabtrimmer-trimming -m "xlm-roberta-${SIZE}" -l "${LA}" --repo-id "vocabtrimmer/${MODEL}" -p "ckpts/${MODEL}" -v ${TARGET}
+#    done
+#  done
+#done
