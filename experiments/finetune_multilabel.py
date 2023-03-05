@@ -123,7 +123,7 @@ def main():
                     "num_train_epochs": tune.choice(list(range(1, 6))),
                     "per_device_train_batch_size": tune.choice([4, 8, 16, 32, 64]),
                 },
-                local_dir=opt.ray_results,
+                local_dir=opt.ray_result_dir,
                 direction="maximize",
                 backend="ray",
                 n_trials=opt.n_trials)
