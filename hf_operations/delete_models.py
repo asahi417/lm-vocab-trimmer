@@ -13,7 +13,7 @@ if len(target) > 0:
         api.delete_repo(repo_id=i, repo_type='model')
 
 # remove blank models
-target = [i.modelId for i in api.list_models(filter=ModelFilter(author='vocabtrimmer')) if 'text2text-generation' not in i.tags]
+target = [i.modelId for i in api.list_models(filter=ModelFilter(author='vocabtrimmer')) if 'text2text-generation' not in i.tags and 'xlm' not in i.modelId]
 pprint(sorted(target))
 if len(target) > 0:
     input("delete all? >>>")
