@@ -1,8 +1,9 @@
 """ Fine-tune LM on multilabel classification task.
 
 LA="french"
+LA_ID="fr"
 LM="xlm-roberta-base"
-python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpt/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpt/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 """
 
 import argparse
@@ -38,7 +39,7 @@ def main():
     parser.add_argument('--split-train', help='', default='train', type=str)
     parser.add_argument('--split-validation', help='', default='validation', type=str)
     parser.add_argument('--split-test', help='', default='test', type=str)
-    parser.add_argument('-r', '--ray-results-dir', help='', default='ray_results', type=str)
+    parser.add_argument('-r', '--ray-result-dir', help='', default='ray_result', type=str)
     parser.add_argument('-l', '--seq-length', help='', default=128, type=int)
     parser.add_argument('--random-seed', help='', default=42, type=int)
     parser.add_argument('--eval-step', help='', default=50, type=int)
@@ -110,7 +111,7 @@ def main():
                     "num_train_epochs": tune.choice(list(range(1, 6))),
                     "per_device_train_batch_size": tune.choice([4, 8, 16, 32, 64]),
                 },
-                local_dir=opt.ray_results,
+                local_dir=opt.ray_result_dir,
                 direction="maximize",
                 backend="ray",
                 n_trials=opt.n_trials,
