@@ -53,7 +53,7 @@ def main():
     ray.init(ignore_reinit_error=True, num_cpus=opt.num_cpus)
 
     # setup data
-    dataset = load_dataset(opt.dataset)
+    dataset = load_dataset(opt.dataset, opt.dataset_name)
     id2label = {n: k for n, k in enumerate(dataset[opt.split_train].features[opt.column_output].names)}
     label2id = {v: k for k, v in id2label.items()}
     
