@@ -6,7 +6,7 @@ filt = ModelFilter(author='vocabtrimmer')
 models = api.list_models(filter=filt)
 models_filtered = [i.modelId for i in models]
 
-pprint([i for i in models_filtered if 'xlm' in i])
+pprint(sorted([i for i in models_filtered if 'xlm' in i]))
 input()
 
 for size in ['small']:

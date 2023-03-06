@@ -46,3 +46,14 @@ if len(target) > 0:
     for i in target:
         api.delete_repo(repo_id=i, repo_type='model')
 
+# xlm cleaner
+filt = ModelFilter(author='vocabtrimmer')
+models = api.list_models(filter=filt)
+models_filtered = [i.modelId for i in models if 'xlm' in i.modelId]
+target = [i for i in models_filtered if 'ja' in i]
+pprint(sorted(target))
+if len(target) > 0:
+    input("delete all? >>>")
+    for i in target:
+        api.delete_repo(repo_id=i, repo_type='model')
+
