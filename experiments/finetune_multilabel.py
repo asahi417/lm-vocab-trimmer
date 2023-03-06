@@ -1,9 +1,30 @@
 """ Fine-tune LM on multilabel classification task.
 
+LM="xlm-roberta-base"
+
 LA="french"
 LA_ID="fr"
-LM="xlm-roberta-base"
-python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpt/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+
+LA="portuguese"
+LA_ID="pt"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+
+LA="arabic"
+LA_ID="ar"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+
+LA="italian"
+LA_ID="it"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+
+LA="spanish"
+LA_ID="es"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+
+LA="german"
+LA_ID="de"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 """
 
 import argparse
@@ -157,8 +178,8 @@ def main():
     if opt.repo_id is not None:
 
         # push model/tokenizer to hub
-        trainer.model.push_to_hub(opt.repo_id, use_auth_token=opt.use_auth_token)
-        tokenizer.push_to_hub(opt.repo_id, use_auth_token=opt.use_auth_token)
+        trainer.model.push_to_hub(opt.repo_id)
+        tokenizer.push_to_hub(opt.repo_id)
 
         # push metric and readme files
         repo = Repository(os.path.basename(opt.repo_id), opt.repo_id)
