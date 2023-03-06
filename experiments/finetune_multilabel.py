@@ -188,18 +188,19 @@ def main():
             shutil.copy2(metric_file, os.path.basename(opt.repo_id))
             with open(metric_file) as f:
                 metric = json.load(f)
+            df = pd.DataFrame(metric)[["eval_f1_micro", 'eval_recall_micro', "eval_precision_micro", "eval_f1_macro", "eval_recall_macro", "eval_precision_macro", "eval_accuracy"]]
+            df = (df * 100).round(2)
 
         # get readme
         readme = f""" # `{opt.repo_id}`
-        This model is a fine-tuned version of [{opt.model}](https://huggingface.co/{opt.model}) on the 
-        [{opt.dataset}](https://huggingface.co/datasets/{opt.dataset})({opt.dataset_name}).
-        Following metrics are computed on the `{opt.split_test}` split of 
-        [{opt.dataset}](https://huggingface.co/datasets/{opt.dataset})({opt.dataset_name}). 
+This model is a fine-tuned version of [{opt.model}](https://huggingface.co/{opt.model}) on the 
+[{opt.dataset}](https://huggingface.co/datasets/{opt.dataset}) ({opt.dataset_name}).
+Following metrics are computed on the `{opt.split_test}` split of 
+[{opt.dataset}](https://huggingface.co/datasets/{opt.dataset})({opt.dataset_name}). 
 
-        {pd.DataFrame([metric]).to_markdown() if metric is not None else ""}
+{df.to_markdown() if metric is not None else ""}
 
-        Check the result file [here](https://huggingface.co/{opt.repo_id}/raw/main/eval.json). 
-        """
+Check the result file [here](https://huggingface.co/{opt.repo_id}/raw/main/eval.json)."""
         with open(f"{os.path.basename(opt.repo_id)}/README.md", "w") as f:
             f.write(readme)
         repo.push_to_hub()
