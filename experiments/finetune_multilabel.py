@@ -4,27 +4,27 @@ LM="xlm-roberta-base"
 
 LA="french"
 LA_ID="fr"
-python experiments/finetune_multilabel.py --skip-train --skip-eval -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 
 LA="portuguese"
 LA_ID="pt"
-python experiments/finetune_multilabel.py --skip-train --skip-eval -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 
 LA="arabic"
 LA_ID="ar"
-python experiments/finetune_multilabel.py --skip-train --skip-eval -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 
 LA="italian"
 LA_ID="it"
-python experiments/finetune_multilabel.py --skip-train --skip-eval -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 
 LA="spanish"
 LA_ID="es"
-python experiments/finetune_multilabel.py --skip-train --skip-eval -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 
 LA="german"
 LA_ID="de"
-python experiments/finetune_multilabel.py --skip-train --skip-eval -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
+python experiments/finetune_multilabel.py -n "${LA}" -m "${LM}" -o "ckpts/${LM}-${LA}" --repo-id "vocabtrimmer/${LM}-tweet-sentiment-${LA_ID}"
 """
 
 import argparse
