@@ -28,6 +28,8 @@ def main():
     parser.add_argument('--min-frequency', help="min frequency of tokens", default=2, type=int)
     parser.add_argument('--tokens-to-keep', help='custom tokens to keep in vocabulary', nargs='+', default=None, type=str)
 
+    parser.add_argument('--overwrite', help='', action='store_true')
+
     opt = parser.parse_args()
 
     # trimming
@@ -43,7 +45,8 @@ def main():
         min_frequency=opt.min_frequency,
         chunk=opt.chunk,
         cache_file_vocab=opt.cache_file_vocab,
-        cache_file_frequency=opt.cache_file_frequency
+        cache_file_frequency=opt.cache_file_frequency,
+        overwrite=opt.overwrite
     )
 
     # push to huggingface

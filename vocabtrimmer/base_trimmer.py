@@ -146,7 +146,7 @@ class VocabTrimmer:
     def trim_vocab(self, language: str, path_to_save: str, dataset: str = 'mc4', dataset_column: str = 'text',
                    dataset_name: str = None, dataset_split: str = 'train', tokens_to_keep: List = None,
                    target_vocab_size: int = None, min_frequency: int = 2, chunk: int = 1000,
-                   cache_file_vocab: str = None, cache_file_frequency: str = None):
+                   cache_file_vocab: str = None, cache_file_frequency: str = None, overwrite: bool = False):
         """ Vocabulary trimming along with vocabulary mining on corpus
 
         :param path_to_save: directly to save model
@@ -176,7 +176,8 @@ class VocabTrimmer:
             min_frequency=min_frequency,
             chunk=chunk,
             cache_file_frequency=cache_file_frequency,
-            cache_file_vocab=cache_file_vocab
+            cache_file_vocab=cache_file_vocab,
+            overwrite=overwrite
         )
 
         vocab = dict(zip(self.tokenizer.all_special_tokens, self.tokenizer.all_special_ids))

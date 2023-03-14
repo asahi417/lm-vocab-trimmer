@@ -1,4 +1,4 @@
-# LM-Vocab-Trimmer: A Simple Model Compression by Trimming Embedding Matrix
+# [WIP] LM-Vocab-Trimmer: A Simple Model Compression by Trimming Embedding Matrix
 The LM-Vocab-Trimmer a.k.a. `vocabtrimmer` is a model compression tool aiming at reducing the parameter size of multilingual LMs 
 by trimming unused tokens from the embedding matrix.
 This library assumes that you want to use or already fine-tuned a multilingual LM in a few specific languages, 

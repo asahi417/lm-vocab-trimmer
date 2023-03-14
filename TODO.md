@@ -1,5 +1,11 @@
 # TODO
 
+- JS div on the test set always
+- language-wise JS div
+- rename Post/Pre-Trim to Post-FT/Pre-FT
+- check the tokens that drops at the accuracy largerly
+
+
 ## Experiment
 
 Comparisons should include:
@@ -7,37 +13,12 @@ Comparisons should include:
 - FT-Trim: Fine-tuned -> Trimmed
 - Trim-FT: Trimmed -> Fine-tuned
 - Target vocab: 15k, 30k, 45k, 60k, 75k
+- Task: QA/QG/Sentiment
 
-Language: Non-English
-Task & Model:
-- mT5 (small): QG-Bench (7 languages)
-- XLM-R (base): Multilingual Tweet Sentiment (ar, en, fr, de, it, pt, es) 
-    
 ## Analysis
 - Stats to track the changes
-    * number of sentences in the dataset that were changed after trimming at tokenization
-    * number of trimmed tokens appeared in the dataset
-  
-## Note
-```python
-mt5_max_vocab = {
-  "ko":  73357,
-  "it": 111056,
-  "ja": 125904,
-  "fr": 131087,
-  "es": 131105,
-  "de": 137617,
-  "ru": 147756,
-}
-xlm_max_vocab = {
-  "ar": 63460,
-  "pt": 83153,
-  "it": 84388,
-  "fr": 106637,
-  "es": 107364,
-  "de": 113067
-}
-```
-90000
-105000
-120000
+  * number of sentences in the dataset that were changed after trimming at tokenization
+  * number of trimmed tokens appeared in the dataset
+- Better to have?    
+  * inference speed difference?
+  * model size difference?
