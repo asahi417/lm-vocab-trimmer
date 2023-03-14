@@ -1,3 +1,4 @@
 cache*
 model
 metric_files
+experiments/result
