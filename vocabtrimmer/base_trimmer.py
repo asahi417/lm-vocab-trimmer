@@ -248,7 +248,8 @@ class VocabTrimmer:
             logging.info(f"updating additional_special_tokens of tokenizer")
             logging.info(f"num of add tokens: {len(additional_special_tokens)}")
             if self.config.model_type == 'mbart':  # lang_ids are added to tokenizer when it's instantiated
-                last_id = len(self.tokenizer.vocab) - 1 - len(additional_special_tokens) + len(MBART_LANG_ID)
+                will_append_ids = [x for x in MBART_LANG_ID if x not in self.tokenizer.vocab]
+                last_id = len(self.tokenizer.vocab) - 1 - len(additional_special_tokens) + len(will_append_ids)
             else:
                 last_id = len(self.tokenizer.vocab) - 1 - len(additional_special_tokens)
             new_sp_token_index = {v: n + last_id + 1 for n, v in enumerate(additional_special_tokens)}

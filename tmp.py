@@ -32,7 +32,7 @@ dataset = 'vocabtrimmer/mc4_validation'
 dataset_column: str = 'text'
 dataset_name = "ja"
 dataset_split = 'validation'
-target_vocab_size = 10000
+target_vocab_size = None
 min_frequency = 2
 chunk = 1000
 cache_file_vocab = None
@@ -157,8 +157,9 @@ additional_special_tokens = [i for i in tokenizer.additional_special_tokens if i
 if len(additional_special_tokens) != 0:
     logging.info(f"updating additional_special_tokens of tokenizer")
     logging.info(f"num of add tokens: {len(additional_special_tokens)}")
-    last_id = len(tokenizer.vocab) - 1 - len(additional_special_tokens)
-    new_sp_token_index = {v: n + last_id + len(MBART_LANG_ID) + 1 for n, v in enumerate(additional_special_tokens)}
+    will_append_ids = [x for x in MBART_LANG_ID if x not in tokenizer.vocab]
+    last_id = len(tokenizer.vocab) - 1 - len(additional_special_tokens)  + len(will_append_ids)
+    new_sp_token_index = {v: n + last_id + 1 for n, v in enumerate(additional_special_tokens)}
     _, _, _, path_added_token, _ = tokenizer.save_pretrained(path_to_save)
     with open(path_added_token, 'w') as f:
         json.dump(new_sp_token_index, f)
