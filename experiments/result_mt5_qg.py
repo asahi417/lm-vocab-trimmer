@@ -3,7 +3,6 @@ import os
 import requests
 
 import pandas as pd
-
 pd.options.mode.chained_assignment = None  # default='warn'
 
 TMP_DIR = 'metric_files'
@@ -16,13 +15,12 @@ mt5_max_vocab = {
   "ru": 147756,
 }
 param_size_trimmed_mt5 = {
+    5000: {"embedding": 5123072, "full": 49185152, "vocab_size": 5003},
+    10000: {"embedding": 10243072, "full": 54305152, "vocab_size": 10003},
     15000: {"embedding": 15361024, "full": 59423104, "vocab_size": 15001},
     30000: {"embedding": 30721024, "full": 74783104, "vocab_size": 30001},
-    45000: {"embedding": 46081024, "full": 90143104, "vocab_size": 45001},
     60000: {"embedding": 61441024, "full": 105503104, "vocab_size": 60001},
-    75000: {"embedding": 76801024, "full": 120863104, "vocab_size": 75001},
     90000: {"embedding": 92161024, "full": 136223104, "vocab_size": 90001},
-    105000: {"embedding": 107521024, "full": 151583104, "vocab_size": 105001},
     120000: {"embedding": 122881024, "full": 166943104, "vocab_size": 120001},
     131087: {"embedding": 134232064, "full": 178294144, "vocab_size": 131086},
     125904: {"embedding": 128924672, "full": 172986752, "vocab_size": 125903},
@@ -102,7 +100,7 @@ for la in ['ja', 'ru', 'fr', 'es', 'it', 'ko']:
         print(la)
     full_data.append(data)
 
-    for v_size in [15000, 45000, 30000, 60000, 75000, 90000, 105000, 120000]:
+    for v_size in [5000, 10000, 15000, 30000, 60000, 90000, 120000]:
         if v_size > mt5_max_vocab[la]:
             continue
 
@@ -136,6 +134,8 @@ df = df[['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore', "language", "
 df[['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore']] = (df[['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore']] * 100).round(2)
 os.makedirs("experiments/result", exist_ok=True)
 df.to_csv("experiments/result/qg.full.csv", index=False)
+print(df)
+
 for m in ['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore']:
 
     main_df = None
@@ -143,14 +143,14 @@ for m in ['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore']:
         g = g[[m, "size", "type"]]
         g['param'] = [param_size_trimmed_mt5[int(i)]['full'] if str(i) != 'nan' else 300176768 for i in g['size']]
         g[la] = g.pop(m)
-        g['size'] = [i if i % 15 == 0 else 250*10**3 for i in g['size']]
+        g['size'] = [i if i % 5 == 0 else 250*10**3 for i in g['size']]
         if main_df is None:
             main_df = g
         else:
             main_df = main_df.merge(g, on=['size', 'type', 'param'], how='outer')
     val_no_trim = main_df[main_df['type'] == 'ft'][[c for c in main_df.columns if c not in ['size', 'type', 'param']]].values
     val = main_df[[c for c in main_df.columns if c not in ['size', 'type', 'param']]].values
-    diff = val - val_no_trim > 0
+    diff = (val.round(1) - val_no_trim.round(1)) >= 0
 
     def tmp_format(x, y):
         if str(x) == 'nan':
@@ -161,7 +161,7 @@ for m in ['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore']:
 
     main_df[[c for c in main_df.columns if c not in ['size', 'type', 'param']]] = [[tmp_format(_v, _d) for _v, _d in zip(v, d)] for v, d in zip(val, diff)]
 
-    main_df['type'] = [i.replace("ft_trimmed", "Pre-Trim").replace("trimmed", "Post-Trim").replace("ft", "No-Trim",) for i in main_df.pop("type")]
+    main_df['type'] = [i.replace("ft_trimmed", "Pre-FT").replace("trimmed", "Post-FT").replace("ft", "No-Trim",) for i in main_df.pop("type")]
     main_df = main_df.sort_values(by=['type', 'size', 'param'])
 
     main_df = main_df.round(1)

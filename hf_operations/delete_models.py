@@ -3,6 +3,17 @@ from huggingface_hub import ModelFilter, HfApi
 
 api = HfApi()
 
+
+filt = ModelFilter(author='vocabtrimmer')
+models = api.list_models(filter=filt)
+models_filtered = [i.modelId for i in models]
+target = [i for i in models_filtered if "mt5-small-trimmed-de" in i]
+pprint(sorted(target))
+if len(target) > 0:
+    input("delete all? >>>")
+    for i in target:
+        api.delete_repo(repo_id=i, repo_type='model')
+
 # remove blank models
 target = [i.modelId for i in api.list_models(filter=ModelFilter(author='asahi417'))]
 target = [i for i in target if "trimmed" in i]
@@ -57,3 +68,24 @@ if len(target) > 0:
     for i in target:
         api.delete_repo(repo_id=i, repo_type='model')
 
+
+# misc cleaner
+filt = ModelFilter(author='vocabtrimmer')
+models = api.list_models(filter=filt)
+models_filtered = [i.modelId for i in models if 'mt5' in i.modelId]
+target = [i for i in models_filtered if 'de' in i and "qg" in i]
+pprint(sorted(target))
+if len(target) > 0:
+    input("delete all? >>>")
+    for i in target:
+        api.delete_repo(repo_id=i, repo_type='model')
+
+filt = ModelFilter(author='vocabtrimmer')
+models = api.list_models(filter=filt)
+models_filtered = [i.modelId for i in models if 'mt5-small-trimmed' in i.modelId]
+target = [i for i in models_filtered if i.endswith("qa") and "000" in i]
+pprint(sorted(target))
+if len(target) > 0:
+    input("delete all? >>>")
+    for i in target:
+        api.delete_repo(repo_id=i, repo_type='model')

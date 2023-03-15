@@ -68,7 +68,7 @@ for la in sorted(max_vocab.keys()):
 
     data = download(
         f"{la}.raw.json",
-        url=f"https://huggingface.co/vocabtrimmer/xlm-roberta-base-tweet-sentiment-{la}/raw/main/eval.json")
+        url=f"https://huggingface.co/cardiffnlp/xlm-roberta-base-tweet-sentiment-{la}/raw/main/eval.json")
     data['language'] = la
     data['size'] = None
     data['type'] = "ft"
@@ -96,7 +96,7 @@ for la in sorted(max_vocab.keys()):
         print(la)
     full_data.append(data)
 
-    for v_size in [15000, 45000, 30000, 60000, 75000, 90000]:
+    for v_size in [5000, 10000, 15000, 30000, 60000, 90000]:
         if v_size > max_vocab[la]:
             continue
 
@@ -128,6 +128,7 @@ df = df[["eval_f1_micro", "eval_recall_micro", "eval_precision_micro",  "eval_f1
 df[["eval_f1_micro", "eval_recall_micro", "eval_precision_micro",  "eval_f1_macro",  "eval_recall_macro",  "eval_precision_macro",  "eval_accuracy"]] = (df[["eval_f1_micro", "eval_recall_micro", "eval_precision_micro",  "eval_f1_macro",  "eval_recall_macro",  "eval_precision_macro",  "eval_accuracy"]] * 100).round(2)
 os.makedirs("experiments/result", exist_ok=True)
 df.to_csv("experiments/result/sentiment.full.csv", index=False)
+print(df)
 
 for m in ["eval_f1_micro", "eval_recall_micro", "eval_precision_micro"]:
 
@@ -154,7 +155,7 @@ for m in ["eval_f1_micro", "eval_recall_micro", "eval_precision_micro"]:
 
     main_df[[c for c in main_df.columns if c not in ['size', 'type', 'param']]] = [[tmp_format(_v, _d) for _v, _d in zip(v, d)] for v, d in zip(val, diff)]
 
-    main_df['type'] = [i.replace("ft_trimmed", "Pre-Trim").replace("trimmed", "Post-Trim").replace("ft", "No-Trim",) for i in main_df.pop("type")]
+    main_df['type'] = [i.replace("ft_trimmed", "Pre-FT").replace("trimmed", "Post-FT").replace("ft", "No-Trim",) for i in main_df.pop("type")]
     main_df = main_df.sort_values(by=['type', 'size', 'param'])
 
     main_df = main_df.round(1)
@@ -170,8 +171,7 @@ for m in ["eval_f1_micro", "eval_recall_micro", "eval_precision_micro"]:
         return f"{int(x / 10 ** 3)}K ({int(z/10**6)}M)"
 
     main_df['size'] = [tmp_format(a, b, c) for a, b, c in zip(main_df['size'], main_df['type'], main_df['param'])]
-    # main_df = main_df.sort_values(by=['type', 'param'])
     main_df.pop("param")
-    main_df = main_df[main_df['size'] != 'Full']
+    # main_df = main_df[main_df['size'] != 'Full']
     print(f"** metric: {m} **")
     print(show_table(main_df.to_latex(index=False, escape=False), m))
