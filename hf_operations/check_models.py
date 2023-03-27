@@ -6,7 +6,10 @@ filt = ModelFilter(author='vocabtrimmer')
 models = api.list_models(filter=filt)
 models_filtered = [i.modelId for i in models]
 
-pprint(sorted([i for i in models_filtered]))
+pprint(sorted([i for i in models_filtered if "xlm-roberta-base" in i]))
 
+pprint(sorted([i for i in models_filtered if "mt5" in i]))
+
+pprint(sorted([i for i in models_filtered if "mbart" in i]))
 
 

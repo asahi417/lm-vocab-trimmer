@@ -22,3 +22,8 @@ Comparisons should include:
 - Better to have?    
   * inference speed difference?
   * model size difference?
+
+
+
+## MAYBE
+- to remove the trimmed foundation model as it's unstable to fine-tune it.
