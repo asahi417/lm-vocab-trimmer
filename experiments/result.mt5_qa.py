@@ -5,7 +5,7 @@ import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
 os.makedirs("experiments/result", exist_ok=True)
 os.makedirs('metric_files', exist_ok=True)
-max_vocab = {"ko":  73357, "it": 111056, "ja": 125904, "fr": 131087, "es": 131105, "ru": 147756}
+max_vocab = {"ko": 73357, "it": 111056, "ja": 125904, "fr": 131087, "es": 131105, "ru": 147756, 'en': 209329}
 param_size_full = {"embedding": 256114688, "full": 300176768, "vocab_size": 250112}
 param_size_trimmed = {
     5000: {"embedding": 5123072, "full": 49185152, "vocab_size": 5003},
@@ -21,6 +21,7 @@ param_size_trimmed = {
     111056: {"embedding": 113721344, "full": 157783424, "vocab_size": 112001},
     147756: {"embedding": 151301120, "full": 195363200, "vocab_size": 148001},
     131105: {"embedding": 134251520, "full": 178313600, "vocab_size": 131106},
+    209329: {"embedding": 214352896, "full": 258414976, "vocab_size": 209329},
 }
 param_size_trimmed[param_size_full['vocab_size']] = {"embedding": param_size_full['embedding'], "full": param_size_full['full'], "vocab_size": param_size_full['vocab_size']}
 
@@ -56,28 +57,30 @@ def download(filename, url):
 
 
 full_data = []
-for la in ['ja', 'ru', 'fr', 'es', 'it', 'ko']:
+for la in ['en', 'ja', 'ru', 'fr', 'es', 'it', 'ko']:
+# for la in ['ja', 'ru', 'fr', 'es', 'it', 'ko']:
     data = {"language": la, 'size': None, "type": "No-Trim"}
-    data.update(download(f"{la}.raw.json", url=f"https://huggingface.co/lmqg/mt5-small-{la}quad-qa/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{la}quad.default.json"))
+    data_name = "squad" if la == "en" else f"{la}quad"
+    data.update(download(f"{la}.raw.json", url=f"https://huggingface.co/lmqg/mt5-small-{data_name}-qa/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{data_name}.default.json"))
     full_data.append(data)
 
     data = {"language": la, 'size': max_vocab[la], "type": "Post-FT (FULL)"}
-    data.update(download(f"{la}.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-{la}quad-qa-trimmed-{la}/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{la}quad.default.json"))
+    data.update(download(f"{la}.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-{data_name}-qa-trimmed-{la}/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{data_name}.default.json"))
     full_data.append(data)
 
     data = {"language": la, 'size': max_vocab[la], "type": "Pre-FT (FULL)"}
-    data.update(download(f"{la}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-trimmed-{la}-{la}quad-qa/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{la}quad.default.json"))
+    data.update(download(f"{la}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-trimmed-{la}-{data_name}-qa/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{data_name}.default.json"))
     full_data.append(data)
 
     for v_size in [5000, 10000, 15000, 30000, 60000, 90000, 120000]:
         if v_size > max_vocab[la]:
             continue
         data = {"language": la, 'size': v_size, "type": "Pre-FT"}
-        data.update(download(f"{la}.{v_size}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-trimmed-{la}-{v_size}-{la}quad-qa/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{la}quad.default.json"))
+        data.update(download(f"{la}.{v_size}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-trimmed-{la}-{v_size}-{data_name}-qa/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{data_name}.default.json"))
         full_data.append(data)
 
         data = {"language": la, 'size': v_size, "type": "Post-FT"}
-        data.update(download(f"{la}.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-{la}quad-qa-trimmed-{la}-{v_size}/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{la}quad.default.json"))
+        data.update(download(f"{la}.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-{data_name}-qa-trimmed-{la}-{v_size}/raw/main/eval/metric.first.answer.paragraph_question.answer.lmqg_qg_{data_name}.default.json"))
         full_data.append(data)
 
 
@@ -139,7 +142,4 @@ for m in ["AnswerF1Score", "AnswerExactMatch"]:
     main_df['Vocab (Param)'] = [f"{int(a / 10 ** 3)}K ({int(c / 10 ** 6)}M)" for a, c in
                                 zip(main_df.pop('size'), main_df.pop('param'))]
     main_df = main_df[["Vocab (Param)", "Post-FT", "Pre-FT"]]
-    # main_df = main_df.T
-    # main_df.columns.name = None
-    # main_df.index.name = None
     print(show_table(main_df.to_latex(escape=False), m))

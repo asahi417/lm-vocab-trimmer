@@ -41,7 +41,6 @@ def main(data_path: str = "experiments/result/qg.full.csv",
                 m: g[g["type"] == "No-Trim"][m].values[0],
                 "Model Size (M)": df_tmp['param'].max() / 10 ** 6
             }])
-            print(g_full_vocab)
             g_full_vocab.plot.line(xlabel=xlabel, ylabel=ylabel, ax=axes[grids[n][0], grids[n][1]], y=m, x='Model Size (M)', color=colors[0], style=":", markersize=10, label='_nolegend_', grid=True)
 
             g_ft_trimmed = g[["Pre-FT" in i for i in g["type"]]]
@@ -78,7 +77,7 @@ if __name__ == '__main__':
         data_path="experiments/result/sentiment.full.csv",
         prefix="xlm_r_sentiment",
         # metrics=["eval_f1_micro", "eval_recall_micro", "eval_precision_micro"],
-        metrics=["eval_f1_micro"],
+        metrics=["eval_f1_micro", "eval_f1_macro"],
         langs=["AR", "IT", "PT", "FR", "ES", "DE"],
         is_xlm=True
     )
