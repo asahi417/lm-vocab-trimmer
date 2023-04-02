@@ -23,7 +23,7 @@ card = [{
     "Language": i.split("-")[-1],
     "Base Model": "[facebook/xlm-v-base](https://huggingface.co/facebook/xlm-v-base)"
     } for i in xlm_v]
-model_card += f"## Sentiment Models\nLanguage models fine-tuned on [cardiffnlp/tweet_sentiment_multilingual](https://huggingface.co/datasets/cardiffnlp/tweet_sentiment_multilingual). ### Vanilla Fine-tuned Models\n\n{pd.DataFrame(card).to_markdown(index=False)}"
+model_card += f"## Sentiment Models\nLanguage models fine-tuned on [cardiffnlp/tweet_sentiment_multilingual](https://huggingface.co/datasets/cardiffnlp/tweet_sentiment_multilingual). \n\n### Vanilla Fine-tuned Models\n\n{pd.DataFrame(card).to_markdown(index=False)}"
 
 # Sentiment Models (FT)
 xlm_v_pre_vt = sorted([i.modelId for i in api.list_models(filter=ModelFilter(author='vocabtrimmer')) if "xlm-v-base-trimmed" in i.modelId and "sentiment" in i.modelId])
