@@ -1,6 +1,8 @@
 # Model Card
 ## Sentiment Models
-Language models fine-tuned on [cardiffnlp/tweet_sentiment_multilingual](https://huggingface.co/datasets/cardiffnlp/tweet_sentiment_multilingual). ### Vanilla Fine-tuned Models
+Language models fine-tuned on [cardiffnlp/tweet_sentiment_multilingual](https://huggingface.co/datasets/cardiffnlp/tweet_sentiment_multilingual). 
+
+### Vanilla Fine-tuned Models
 
 | Model                                                                                                                   | Language   | Base Model                                                        |
 |:------------------------------------------------------------------------------------------------------------------------|:-----------|:------------------------------------------------------------------|
