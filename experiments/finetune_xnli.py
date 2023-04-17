@@ -35,7 +35,7 @@ def main():
     parser.add_argument('--split-validation', help='', default='validation', type=str)
     parser.add_argument('--split-test', help='', default='test', type=str)
     parser.add_argument('-r', '--ray-result-dir', help='', default='ray_result', type=str)
-    parser.add_argument('-l', '--seq-length', help='', default=128, type=int)
+    parser.add_argument('-l', '--seq-length', help='', default=256, type=int)
     parser.add_argument('--random-seed', help='', default=42, type=int)
     parser.add_argument('--eval-step', help='', default=50, type=int)
     parser.add_argument('-t', '--n-trials', default=5, type=int)
@@ -105,7 +105,7 @@ def main():
                 hp_space=lambda x: {
                     "learning_rate": tune.loguniform(1e-6, 1e-4),
                     "num_train_epochs": tune.choice(list(range(1, 6))),
-                    "per_device_train_batch_size": tune.choice([4, 8, 16, 32, 64]),
+                    "per_device_train_batch_size": tune.choice([4, 8, 16, 32]),
                 },
                 local_dir=opt.ray_result_dir,
                 direction="maximize",
