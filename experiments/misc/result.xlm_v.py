@@ -5,24 +5,22 @@ import pandas as pd
 
 pd.options.mode.chained_assignment = None  # default='warn'
 os.makedirs("experiments/result", exist_ok=True)
-os.makedirs('metric_files', exist_ok=True)
-max_vocab = {"ko": 73357, "it": 111056, "ja": 125904, "fr": 131087, "es": 131105, "ru": 147756, 'en': 209329}
-param_size_full = {"embedding": 256114688, "full": 300176768, "vocab_size": 250112}
+os.makedirs('../metric_files', exist_ok=True)
+max_vocab = {"pt": 181373, "it": 184721, "ar": 92992, "fr": 218448, "es": 243366, "de": 239290, "en": 484747}
+param_size_full = {"embedding": 692451072, "full": 778495491, "vocab_size": 901629}
 param_size_trimmed = {
-    5000: {"embedding": 5123072, "full": 49185152, "vocab_size": 5003},
-    10000: {"embedding": 10243072, "full": 54305152, "vocab_size": 10003},
-    15000: {"embedding": 15361024, "full": 59423104, "vocab_size": 15001},
-    30000: {"embedding": 30721024, "full": 74783104, "vocab_size": 30001},
-    60000: {"embedding": 61441024, "full": 105503104, "vocab_size": 60001},
-    90000: {"embedding": 92161024, "full": 136223104, "vocab_size": 90001},
-    120000: {"embedding": 122881024, "full": 166943104, "vocab_size": 120001},
-    131087: {"embedding": 134232064, "full": 178294144, "vocab_size": 131086},
-    125904: {"embedding": 128924672, "full": 172986752, "vocab_size": 125903},
-    73357: {"embedding": 75116544, "full": 119178624, "vocab_size": 75001},
-    111056: {"embedding": 113721344, "full": 157783424, "vocab_size": 112001},
-    147756: {"embedding": 151301120, "full": 195363200, "vocab_size": 148001},
-    131105: {"embedding": 134251520, "full": 178313600, "vocab_size": 131106},
-    209329: {"embedding": 214352896, "full": 258414976, "vocab_size": 209329},
+    5000: {"embedding": 3841536, "full": 89885955, "vocab_size": 5002},
+    10000: {"embedding": 7681536, "full": 93725955, "vocab_size": 10002},
+    15000: {"embedding": 11521536, "full": 97565955, "vocab_size": 15002},
+    30000: {"embedding": 23041536, "full": 109085955, "vocab_size": 30002},
+    60000: {"embedding": 46081536, "full": 132125955, "vocab_size": 60002},
+    243366: {"embedding": 186905088, "full": 272949507, "vocab_size": 243366},
+    181373: {"embedding": 139294464, "full": 225338883, "vocab_size": 181373},
+    92992: {"embedding": 71417856, "full": 157462275, "vocab_size": 92992},
+    218448: {"embedding": 167768064, "full": 253812483, "vocab_size": 218448},
+    184721: {"embedding": 141865728, "full": 227910147, "vocab_size": 184721},
+    239290: {"embedding": 183774720, "full": 269819139, "vocab_size": 239290},
+    484747: {"embedding": 372285696, "full": 458330115, "vocab_size": 484747},
 }
 param_size_trimmed[param_size_full['vocab_size']] = {"embedding": param_size_full['embedding'], "full": param_size_full['full'], "vocab_size": param_size_full['vocab_size']}
 
@@ -40,10 +38,10 @@ def show_table(table, name):
 
 
 def download(filename, url):
-    filename = f"mt5_qg.{filename}"
+    filename = f"xlm-v.{filename}"
     try:
         with open(f'metric_files/{filename}') as f_reader:
-            return json.load(f_reader)['test']
+            return json.load(f_reader)
     except Exception:
         pass
     print(f'download {url}')
@@ -52,47 +50,48 @@ def download(filename, url):
             r = requests.get(url)
             f_reader.write(r.content)
         with open(f'metric_files/{filename}') as f_reader:
-            return json.load(f_reader)['test']
+            return json.load(f_reader)
     except Exception:
         return None
 
 
 full_data = []
-for la in ['ja', 'ru', 'fr', 'es', 'it', 'ko', "en"]:
+for la in sorted(max_vocab.keys()):
+    if la == 'ar':
+        continue
+
     data = {"language": la, 'size': None, "type": "No-Trim"}
-    data_name = "squad" if la == "en" else f"{la}quad"
-    data.update(download(f"{la}.raw.json", url=f"https://huggingface.co/lmqg/mt5-small-{data_name}-qg/raw/main/eval/metric.first.sentence.paragraph_answer.question.lmqg_qg_{data_name}.default.json"))
+    data.update(download(f"{la}.raw.json", url=f"https://huggingface.co/cardiffnlp/xlm-v-base-tweet-sentiment-{la}/raw/main/eval.json"))
     full_data.append(data)
 
     data = {"language": la, 'size': max_vocab[la], "type": "Post-FT (FULL)"}
-    data.update(download(f"{la}.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-{data_name}-qg-trimmed-{la}/raw/main/eval/metric.first.sentence.paragraph_answer.question.lmqg_qg_{data_name}.default.json"))
+    data.update(download(f"{la}.json", url=f"https://huggingface.co/vocabtrimmer/xlm-v-base-tweet-sentiment-{la}-trimmed-{la}/raw/main/eval.json"))
     full_data.append(data)
 
     data = {"language": la, 'size': max_vocab[la], "type": "Pre-FT (FULL)"}
-    data.update(download(f"{la}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-trimmed-{la}-{data_name}-qg/raw/main/eval/metric.first.sentence.paragraph_answer.question.lmqg_qg_{data_name}.default.json"))
+    data.update(download(f"{la}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/xlm-v-base-trimmed-{la}-tweet-sentiment-{la}/raw/main/eval.json"))
     full_data.append(data)
-
-    for v_size in [5000, 10000, 15000, 30000, 60000, 90000, 120000]:
+    for v_size in [5000, 10000, 15000, 30000, 60000]:
         if v_size > max_vocab[la]:
             continue
         data = {"language": la, 'size': v_size, "type": "Pre-FT"}
-        data.update(download(f"{la}.{v_size}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-trimmed-{la}-{v_size}-{data_name}-qg/raw/main/eval/metric.first.sentence.paragraph_answer.question.lmqg_qg_{data_name}.default.json"))
+        data.update(download(f"{la}.{v_size}.ft_trimmed.json", url=f"https://huggingface.co/vocabtrimmer/xlm-v-base-trimmed-{la}-{v_size}-tweet-sentiment-{la}/raw/main/eval.json"))
         full_data.append(data)
 
         data = {"language": la, 'size': v_size, "type": "Post-FT"}
-        data.update(download(f"{la}.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/mt5-small-{data_name}-qg-trimmed-{la}-{v_size}/raw/main/eval/metric.first.sentence.paragraph_answer.question.lmqg_qg_{data_name}.default.json"))
+        data.update(download(f"{la}.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/xlm-v-base-tweet-sentiment-{la}-trimmed-{la}-{v_size}/raw/main/eval.json"))
         full_data.append(data)
 
-df = pd.DataFrame(full_data)[['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore', "language", "size", "type"]]
-df[['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore']] = df[['Bleu_4', 'METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore']] * 100
+df = pd.DataFrame(full_data)[["eval_f1_micro", "eval_recall_micro", "eval_precision_micro",  "eval_f1_macro",  "eval_recall_macro",  "eval_precision_macro",  "eval_accuracy", "language", "size", "type"]]
+df[["eval_f1_micro", "eval_recall_micro", "eval_precision_micro",  "eval_f1_macro",  "eval_recall_macro",  "eval_precision_macro",  "eval_accuracy"]] = df[["eval_f1_micro", "eval_recall_micro", "eval_precision_micro",  "eval_f1_macro",  "eval_recall_macro",  "eval_precision_macro",  "eval_accuracy"]] * 100
 df['size'] = df['size'].fillna(param_size_full['vocab_size'])
 df['param'] = [param_size_trimmed[int(i)]['full'] for i in df['size']]
-df.to_csv("experiments/result/qg.full.csv", index=False)
+df.to_csv("experiments/result/sentiment.full.csv", index=False)
+
+
 df_full = df[["FULL" in i or i == "No-Trim" for i in df['type']]]
 df = df[["FULL" not in i for i in df['type']]]
-
-
-for m in ['METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore', 'Bleu_4']:
+for m in ["eval_f1_micro", "eval_f1_macro"]:
 
     main_df = None
     for la, g in df.groupby('language'):
@@ -112,6 +111,7 @@ for m in ['METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore', 'Bleu_4']:
         if y:
             return "\textbf{" + f"{round(x, 1)}" + "}"
         return f"{round(x, 1)}"
+
     main_df[[c for c in main_df.columns if c not in ['size', 'type', 'param']]] = [[tmp_format(_v, _d, n == 0) for _v, _d in zip(v, d)] for n, (v, d) in enumerate(zip(val, diff))]
     main_df = main_df.sort_values(by=['type', 'size', 'param'])
     main_df = main_df.round(1)
@@ -120,7 +120,10 @@ for m in ['METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore', 'Bleu_4']:
     main_df = main_df[['type', 'size', 'param'] + [c for c in main_df.columns if c not in ['type', 'size', 'param']]]
     main_df['Vocab (Param)'] = [f"{int(a / 10 ** 3)}K ({int(c/10**6)}M)" for a, c in zip(main_df.pop('size'), main_df.pop('param'))]
     main_df["Trimming"] = main_df.pop("type")
-    main_df = main_df[['Vocab (Param)', "Trimming"] + [c for c in main_df.columns if c not in ['Vocab (Param)', "Trimming"]]]
+    main_df_no_trim = main_df[[i == "No-Trim" for i in main_df['Trimming']]]
+    langs = [c for c in main_df.columns if c not in ['Vocab (Param)', "Trimming"]]
+
+    main_df = main_df[["Trimming", "Vocab (Param)"] + langs]
 
     print(f"** metric: {m} **")
     print(show_table(main_df.to_latex(index=False, escape=False), m))
@@ -134,8 +137,7 @@ for m in ['METEOR', 'ROUGE_L', 'BERTScore', 'MoverScore', 'Bleu_4']:
     main_df["param"] = [param_size_trimmed[max_vocab[i.lower()]]['full'] for i in main_df.index]
     main_df['Vocab (Param)'] = [f"{int(a / 10 ** 3)}K ({int(c/10**6)}M)" for a, c in zip(main_df.pop('size'), main_df.pop('param'))]
     main_df = main_df[["Vocab (Param)", "Post-FT", "Pre-FT"]]
-    # main_df = main_df.T
-    # main_df.columns.name = None
-    # main_df.index.name = None
+    main_df["No-Trim"] = [main_df_no_trim[l].values[0].replace("\textit", "") for l in main_df_no_trim[langs]]
+    main_df.columns.name = None
+    main_df = main_df[["No-Trim", "Pre-FT", "Post-FT", "Vocab (Param)"]]
     print(show_table(main_df.to_latex(escape=False), m))
-

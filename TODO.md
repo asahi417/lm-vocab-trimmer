@@ -1,4 +1,2 @@
-# TODO
-- QA/QG pre-FT VT in mBART
-  * es on STONE
-  * others on hawk
+# NOTE
+mBART embedding matrix size should be half (don't have to change the full size).

@@ -7,31 +7,31 @@ sentiment () {
   ####################
   LA_DATA="english"
   LA="en"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
 
   LA_DATA="french"
   LA="fr"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
 
   LA_DATA="portuguese"
   LA="pt"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
 
   LA_DATA="arabic"
   LA="ar"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
 
   LA_DATA="italian"
   LA="it"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
 
   LA_DATA="spanish"
   LA="es"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
 
   LA_DATA="german"
   LA="de"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "cardiffnlp/${LM_ALIAS}-tweet-sentiment-${LA}"
 
   ##########################
   # TRIM FINE-TUNED MODELS #
@@ -44,7 +44,7 @@ sentiment () {
     mv "${MODEL}" "best_model"
     mkdir "${MODEL}"
     mv "best_model" "${MODEL}"
-    python experiments/finetune_multilabel.py --skip-train -n "${2}" -m "vocabtrimmer/${MODEL}" -o "${MODEL}"
+    python experiments/finetune_sentiment.py --skip-train -n "${2}" -m "vocabtrimmer/${MODEL}" -o "${MODEL}"
     mv "${MODEL}/eval.json" "${MODEL}/best_model"
     cd "${MODEL}/best_model" && git add . && git commit -m "update" && git push && cd ../../
     rm -rf "${MODEL}"
@@ -58,7 +58,7 @@ sentiment () {
     mv "${MODEL}" "best_model"
     mkdir "${MODEL}"
     mv "best_model" "${MODEL}"
-    python experiments/finetune_multilabel.py --skip-train -n "${2}" -m "vocabtrimmer/${MODEL}" -o "${MODEL}"
+    python experiments/finetune_sentiment.py --skip-train -n "${2}" -m "vocabtrimmer/${MODEL}" -o "${MODEL}"
     mv "${MODEL}/eval.json" "${MODEL}/best_model"
     cd "${MODEL}/best_model" && git add . && git commit -m "update" && git push && cd ../../
     rm -rf "${MODEL}"
@@ -128,12 +128,12 @@ sentiment () {
   LA_DATA="english"
   LA="en"
   vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
   rm -rf "${LM_ALIAS}-trimmed-${LA}"
   for TARGET in 5000 10000 15000 30000 60000 
   do
     vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" --target-vocab-size "${TARGET}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}"
-    python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
+    python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}"
   done
@@ -141,12 +141,12 @@ sentiment () {
   LA_DATA="french"
   LA="fr"
   vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
   rm -rf "${LM_ALIAS}-trimmed-${LA}"
   for TARGET in 5000 10000 15000 30000 60000
   do
     vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" --target-vocab-size "${TARGET}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}"
-    python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
+    python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}"
   done
@@ -154,12 +154,12 @@ sentiment () {
   LA_DATA="portuguese"
   LA="pt"
   vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
   rm -rf "${LM_ALIAS}-trimmed-${LA}"
   for TARGET in 5000 10000 15000 30000 60000
   do
     vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" --target-vocab-size "${TARGET}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}"
-    python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
+    python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}"
   done
@@ -167,12 +167,12 @@ sentiment () {
   LA_DATA="italian"
   LA="it"
   vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
   rm -rf "${LM_ALIAS}-trimmed-${LA}"
   for TARGET in 5000 10000 15000 30000 60000
   do
     vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" --target-vocab-size "${TARGET}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}"
-    python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
+    python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}"
   done
@@ -180,12 +180,12 @@ sentiment () {
   LA_DATA="spanish"
   LA="es"
   vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
   rm -rf "${LM_ALIAS}-trimmed-${LA}"
   for TARGET in 5000 10000 15000 30000 60000
   do
     vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" --target-vocab-size "${TARGET}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}"
-    python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
+    python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}"
   done
@@ -193,12 +193,12 @@ sentiment () {
   LA_DATA="german"
   LA="de"
   vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
   rm -rf "${LM_ALIAS}-trimmed-${LA}"
   for TARGET in 5000 10000 15000 30000 60000
   do
     vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" --target-vocab-size "${TARGET}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}"
-    python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
+    python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}"
   done
@@ -206,12 +206,12 @@ sentiment () {
   LA_DATA="arabic"
   LA="ar"
   vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
+  python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-tweet-sentiment-${LA}"
   rm -rf "${LM_ALIAS}-trimmed-${LA}"
   for TARGET in 5000 10000 15000 30000 60000
   do
     vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" --target-vocab-size "${TARGET}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}"
-    python experiments/finetune_multilabel.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
+    python experiments/finetune_sentiment.py -n "${LA_DATA}" -m "${PWD}/ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}-tweet-sentiment-${LA}"
     rm -rf "${LM_ALIAS}-trimmed-${LA}-${TARGET}"
   done
@@ -219,9 +219,5 @@ sentiment () {
 
 sentiment "xlm-roberta-base" "xlm-roberta-base"
 sentiment "facebook/xlm-v-base" "xlm-v-base"
-#  LM="facebook/xlm-v-base" "xlm-v-base"
-#  LM_ALIAS="xlm-v-base"
-#
-#  LM="xlm-roberta-base"
-#  LM_ALIAS="xlm-roberta-base"
 
+python experiments/finetune_sentiment.py -n "en" -m "roberta-base" -o "ckpts/roberta-base-en" --repo-id "cardiffnlp/roberta-base-tweet-sentiment-es"

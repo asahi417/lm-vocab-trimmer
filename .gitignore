@@ -2,3 +2,5 @@ cache*
 model
 metric_files
 experiments/result
+experiments/misc
+evaluate_bias_in_mlm

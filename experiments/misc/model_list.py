@@ -1,4 +1,3 @@
-from pprint import pprint
 
 import pandas as pd
 from huggingface_hub import ModelFilter, HfApi
@@ -9,6 +8,10 @@ pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', -1)
 
 api = HfApi()
+
+# #MLMs
+# xlm_v = sorted([i.modelId for i in api.list_models(filter=ModelFilter(author='vocabtrimmer')) if "xlm-v-base-tweet" in i.modelId and 'tweet' not in i.modelId])
+# xlm_r = sorted([i.modelId for i in api.list_models(filter=ModelFilter(author='vocabtrimmer')) if "xlm-roberta-base-tweet" in i.modelId and 'tweet' not in i.modelId])
 
 # Sentiment Models (Vanilla)
 models = [i.modelId for i in api.list_models(filter=ModelFilter(author='cardiffnlp')) if "base-tweet-sentiment" in i.modelId]

@@ -22,9 +22,9 @@ MBART_LANG_ID = ['ar_AR', 'cs_CZ', 'de_DE', 'en_XX', 'es_XX', 'et_EE', 'fi_FI', 
                  'tr_TR', 'vi_VN', 'zh_CN']
 
 
-def show_parameter(target_model, log: bool = False, is_encoder_decoder: bool = True):
+def show_parameter(target_model, log: bool = False, double_embedding: bool = True):
     param_size_embedding = prod(target_model.get_input_embeddings().weight.shape)
-    if is_encoder_decoder:
+    if double_embedding:
         param_size_embedding = param_size_embedding * 2
     param_size_full = sum(p.numel() for p in target_model.parameters())
     vocab_size = len(target_model.get_input_embeddings().weight)
@@ -90,25 +90,28 @@ def save_pretrained(model, tokenizer, path_to_save):
 class VocabTrimmer:
     """ Vocabulary trimming for language localization of multilingual LM """
 
-    def __init__(self, model_name: str):
+    def __init__(self, model_name: str, double_embedding: bool = None):
         """ Vocabulary trimming for language localization of multilingual LM
 
         :param model_name: model name on huggingface or path to local model
+        :param double_embedding: (this is only for log) double the number of embedding or not
         """
         # load model
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.config = AutoConfig.from_pretrained(model_name)
+        if double_embedding is None:
+            self.double_embedding = True if self.config.model_type in ['mt5'] else False
+        else:
+            self.double_embedding = double_embedding
         if self.config.model_type in ['mt5', 'mbart']:
             logging.info("model is encoder-decoder LM")
-            self.is_encoder_decoder = True
             if self.config.model_type == 'mbart':
                 self.__model_class = MBartForConditionalGeneration
             else:
                 self.__model_class = MT5ForConditionalGeneration
         else:
             logging.info("model is masked LM")
-            self.is_encoder_decoder = False
             if self.config.architectures[0].endswith("TokenClassification"):
                 self.__model_class = AutoModelForTokenClassification
             elif self.config.architectures[0].endswith("SequenceClassification"):
@@ -141,7 +144,7 @@ class VocabTrimmer:
         return pipeline("fill-mask", model=self.model, tokenizer=self.tokenizer)(input_text)
 
     def show_parameter(self, log: bool = False):
-        return show_parameter(self.model, is_encoder_decoder=self.is_encoder_decoder, log=log)
+        return show_parameter(self.model, double_embedding=self.double_embedding, log=log)
 
     def trim_vocab(self, language: str, path_to_save: str, dataset: str = 'mc4', dataset_column: str = 'text',
                    dataset_name: str = None, dataset_split: str = 'train', tokens_to_keep: List = None,

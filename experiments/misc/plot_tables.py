@@ -60,9 +60,7 @@ mbart = [{
 df_1 = pd.DataFrame(xlm + mt5 + mbart)
 df_1['Vocabulary Size (K)'] = [f"{round(i/10**3)}K" for i in df_1.pop("Vocab")]
 df_1['Parameter Size (M)'] = [f"{round(i/10**6)}M" for i in df_1.pop("Param")]
-# df_1['Voocab (K) / Param (M)'] = [f"{a} / {b}" for a, b in zip(df)]
 print("- Table 1")
-# print(df_1)
 print(df_1.to_latex(index=False, escape=False))
 
 output_tmp = []
@@ -83,7 +81,5 @@ for s in [5000, 10000, 15000, 30000, 60000, 90000, 120000, None]:
         })
 df_2 = pd.DataFrame(output_tmp)
 df_2.index = df_2.pop("Vocab")
-# styles = ['o-', 'o--', 'o:', 's-', 's--', 's:', '^-', '^--', '^:', "X-", "X--", "X:"]
-df_2.plot.line(xlabel="Vocabulary Size (K)", ylabel="Parameter Size (M)", grid=True, style=["o-", "s:", "^--"])
-plt.tight_layout()
-plt.savefig(f"experiments/result/figures/vocab_param.png", bbox_inches="tight", dpi=600)
+print("- Table 2")
+print(df_2.to_latex(escape=False))

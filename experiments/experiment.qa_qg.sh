@@ -160,9 +160,9 @@ ft_1 () {
 ft_2 () {
   LA=${1}
 
-  # trim
-  vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-  rm -rf "${LM_ALIAS}-trimmed-${LA}"
+#  # trim
+#  vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
+#  rm -rf "${LM_ALIAS}-trimmed-${LA}"
 
   if [[ "${1}" == "en" ]]; then
     DATASET="squad"
@@ -170,25 +170,26 @@ ft_2 () {
     DATASET="${1}quad"
   fi
 
-  # finetune qg
+#   finetune qg
   MODEL="${LM_ALIAS}-trimmed-${LA}-${DATASET}-qg"
 #  lmqg-train-search -c "lmqg_output/trimmed_qg/${MODEL}" -d "lmqg/qg_${DATASET}" -m "ckpts/${LM_ALIAS}-trimmed-${LA}" -b 32 -g 2 --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 --low-cpu-mem-usage
-  lmqg-train-search -c "lmqg_output/trimmed_qg/${MODEL}" -d "lmqg/qg_${DATASET}" -m "ckpts/${LM_ALIAS}-trimmed-${LA}" -b 8 -g 8 --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 --low-cpu-mem-usage
-  lmqg-eval -m "lmqg_output/trimmed_qg/${MODEL}/best_model" -e "lmqg_output/trimmed_qg/${MODEL}/best_model/eval" --language "${LA}" -d "lmqg/qg_${DATASET}" -i "paragraph_answer" --prediction-aggregation "first" --prediction-level "sentence"
-  lmqg-push-to-hf -m "lmqg_output/trimmed_qg/${MODEL}/best_model" -a "${MODEL}" -o "vocabtrimmer"
-  rm -rf "${MODEL}"
+#  lmqg-train-search -c "lmqg_output/trimmed_qg/${MODEL}" -d "lmqg/qg_${DATASET}" -m "ckpts/${LM_ALIAS}-trimmed-${LA}" -b 8 -g 8 --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 --low-cpu-mem-usage
+#  lmqg-train-search -c "lmqg_output/trimmed_qg/${MODEL}" -d "lmqg/qg_${DATASET}" -m "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}" -b 8 -g 8 --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 --low-cpu-mem-usage
+#  lmqg-eval -m "lmqg_output/trimmed_qg/${MODEL}/best_model" -e "lmqg_output/trimmed_qg/${MODEL}/best_model/eval" --language "${LA}" -d "lmqg/qg_${DATASET}" -i "paragraph_answer" --prediction-aggregation "first" --prediction-level "sentence"
+#  lmqg-push-to-hf -m "lmqg_output/trimmed_qg/${MODEL}/best_model" -a "${MODEL}" -o "vocabtrimmer"
+#  rm -rf "${MODEL}"
   # finetune qa
   MODEL="${LM_ALIAS}-trimmed-${LA}-${DATASET}-qa"
-  lmqg-train-search -m "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}" -d "lmqg/qg_${DATASET}" --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 -b 32 -g 2 4 -c "lmqg_output/trimmed_qa/${MODEL}" -i 'paragraph_question' -o 'answer' --low-cpu-mem-usage
-#  lmqg-train-search -m "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}" -d "lmqg/qg_${DATASET}" --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 -b 8 -g 8 16 -c "lmqg_output/trimmed_qa/${MODEL}" -i 'paragraph_question' -o 'answer' --low-cpu-mem-usage
+#  lmqg-train-search -m "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}" -d "lmqg/qg_${DATASET}" --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 -b 32 -g 2 4 -c "lmqg_output/trimmed_qa/${MODEL}" -i 'paragraph_question' -o 'answer' --low-cpu-mem-usage
+  lmqg-train-search -m "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}" -d "lmqg/qg_${DATASET}" --lr 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0 0.15 --language "${LA}" --n-max-config 1 -b 8 -g 8 16 -c "lmqg_output/trimmed_qa/${MODEL}" -i 'paragraph_question' -o 'answer' --low-cpu-mem-usage
   lmqg-eval -m "lmqg_output/trimmed_qa/${MODEL}/best_model" -e "lmqg_output/trimmed_qa/${MODEL}/best_model/eval" -d "lmqg/qg_${DATASET}" -i 'paragraph_question' -o 'answer'
   lmqg-eval-qa -m "lmqg_output/trimmed_qa/${MODEL}/best_model" -e "lmqg_output/trimmed_qa/${MODEL}/best_model/eval" -d "lmqg/qg_${DATASET}" --language "${LA}"
   lmqg-push-to-hf -m "lmqg_output/trimmed_qa/${MODEL}/best_model" -a "${MODEL}" -o "vocabtrimmer"
-  rm -rf "${MODEL}"
+#  rm -rf "${MODEL}"
 }
 
 
-for LA in 'ko' 'ja' 'ru' 'fr' 'es' 'it' 'en'
+for LA in 'ko' 'ja' 'ru' 'fr' 'it' 'es' 'en'
 do
   ft_2 ${LA}
 done
