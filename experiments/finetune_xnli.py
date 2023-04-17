@@ -38,7 +38,7 @@ def main():
     parser.add_argument('-l', '--seq-length', help='', default=128, type=int)
     parser.add_argument('--random-seed', help='', default=42, type=int)
     parser.add_argument('--eval-step', help='', default=50, type=int)
-    parser.add_argument('-t', '--n-trials', default=10, type=int)
+    parser.add_argument('-t', '--n-trials', default=5, type=int)
     parser.add_argument('--num-cpus', default=1, type=int)
     parser.add_argument('--repo-id', default=None, type=str)
     parser.add_argument('--skip-train', action='store_true')
@@ -93,8 +93,8 @@ def main():
             model=model,
             args=TrainingArguments(
                 output_dir=opt.output_dir, evaluation_strategy="steps", eval_steps=opt.eval_step, seed=opt.random_seed),
-            train_dataset=tokenized_datasets[opt.split_train],
-            eval_dataset=tokenized_datasets[opt.split_validation],
+            train_dataset=tokenized_datasets[opt.split_train][:10000],
+            eval_dataset=tokenized_datasets[opt.split_validation][:1000],
             compute_metrics=compute_metric_search,
             model_init=lambda x: AutoModelForSequenceClassification.from_pretrained(
                 opt.model, num_labels=len(id2label), return_dict=True, id2label=id2label, label2id=label2id))
