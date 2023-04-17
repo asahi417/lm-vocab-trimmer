@@ -93,8 +93,8 @@ def main():
             model=model,
             args=TrainingArguments(
                 output_dir=opt.output_dir, evaluation_strategy="steps", eval_steps=opt.eval_step, seed=opt.random_seed),
-            train_dataset=tokenized_datasets[opt.split_train][:10000],
-            eval_dataset=tokenized_datasets[opt.split_validation][:1000],
+            train_dataset=tokenized_datasets[opt.split_train].select(list(range(10000))),
+            eval_dataset=tokenized_datasets[opt.split_validation].select(list(range(1000))),
             compute_metrics=compute_metric_search,
             model_init=lambda x: AutoModelForSequenceClassification.from_pretrained(
                 opt.model, num_labels=len(id2label), return_dict=True, id2label=id2label, label2id=label2id))
