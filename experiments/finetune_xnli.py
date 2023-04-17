@@ -26,9 +26,10 @@ def main():
     parser = argparse.ArgumentParser(description='Fine-tuning language model.')
     parser.add_argument('-o', '--output-dir', help='Directory to output', required=True, type=str)
     parser.add_argument('-m', '--model', help='transformer LM', default='xlm-roberta-base', type=str)
-    parser.add_argument('-d', '--dataset', help='', default='cardiffnlp/tweet_sentiment_multilingual', type=str)
-    parser.add_argument('-n', '--dataset-name', help='', default='english', type=str)
-    parser.add_argument('--column-input', help='', default='text', type=str)
+    parser.add_argument('-d', '--dataset', help='', default='xnli', type=str)
+    parser.add_argument('-n', '--dataset-name', help='', default='en', type=str)
+    parser.add_argument('--column-premise', help='', default='premise', type=str)
+    parser.add_argument('--column-hypothesis', help='', default='hypothesis', type=str)
     parser.add_argument('--column-output', help='', default='label', type=str)
     parser.add_argument('--split-train', help='', default='train', type=str)
     parser.add_argument('--split-validation', help='', default='validation', type=str)
@@ -57,9 +58,10 @@ def main():
     model = AutoModelForSequenceClassification.from_pretrained(
         opt.model, num_labels=len(label2id), id2label=id2label, label2id=label2id)
     tokenized_datasets = dataset.map(
-        lambda x: tokenizer(x[opt.column_input], padding="max_length", truncation=True, max_length=opt.seq_length),
+        lambda x: tokenizer(
+            x[opt.column_premise], x[opt.column_hypothesis], padding="max_length", truncation=True, max_length=opt.seq_length),
         batched=True)
-    
+
     # setup metrics
     metric_accuracy = load_metric("accuracy")
     metric_f1 = load_metric("f1")
