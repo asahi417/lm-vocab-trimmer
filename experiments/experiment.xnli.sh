@@ -5,6 +5,7 @@ sentiment () {
   ####################
   # VANILLA FINETUNE #
   ####################
+  # Torun arabic
   for LA in "en" "fr" "de" "es" "ar"
   do
     python experiments/finetune_xnli.py -n "${LA}" -m "${LM}" -o "ckpts/${LM_ALIAS}-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-xnli-${LA}"

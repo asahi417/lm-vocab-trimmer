@@ -5,21 +5,15 @@ import json
 import logging
 import os
 import shutil
-
-import multiprocessing
 from os.path import join as pj
 
-import ray
-import torch
 import numpy as np
 import pandas as pd
 from datasets import load_dataset, load_metric
 from huggingface_hub import Repository
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
-from ray import tune
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer, EarlyStoppingCallback
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
-os.environ["WANDB_DISABLED"] = "true"
 
 
 def main():
@@ -34,19 +28,13 @@ def main():
     parser.add_argument('--split-train', help='', default='train', type=str)
     parser.add_argument('--split-validation', help='', default='validation', type=str)
     parser.add_argument('--split-test', help='', default='test', type=str)
-    parser.add_argument('-r', '--ray-result-dir', help='', default='ray_result', type=str)
     parser.add_argument('-l', '--seq-length', help='', default=256, type=int)
     parser.add_argument('--random-seed', help='', default=42, type=int)
-    parser.add_argument('--eval-step', help='', default=50, type=int)
-    parser.add_argument('-t', '--n-trials', default=3, type=int)
-    parser.add_argument('--num-cpus', default=1, type=int)
+    parser.add_argument('--eval-step', help='', default=1000, type=int)
     parser.add_argument('--repo-id', default=None, type=str)
     parser.add_argument('--skip-train', action='store_true')
     parser.add_argument('--skip-eval', action='store_true')
-    parser.add_argument('--parallel', action='store_true')
     opt = parser.parse_args()
-
-    ray.init(ignore_reinit_error=True, num_cpus=opt.num_cpus)
 
     # setup data
     dataset = load_dataset(opt.dataset, opt.dataset_name)
@@ -89,48 +77,22 @@ def main():
     if not opt.skip_train:
 
         # setup trainer
+        # https://github.com/facebookresearch/fairseq/issues/2057
         trainer = Trainer(
             model=model,
+            callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
             args=TrainingArguments(
-                output_dir=opt.output_dir, evaluation_strategy="steps", eval_steps=opt.eval_step, seed=opt.random_seed),
-            train_dataset=tokenized_datasets[opt.split_train].select(list(range(100000))),
-            eval_dataset=tokenized_datasets[opt.split_validation].select(list(range(1000))),
-            compute_metrics=compute_metric_search,
-            model_init=lambda x: AutoModelForSequenceClassification.from_pretrained(
-                opt.model, num_labels=len(id2label), return_dict=True, id2label=id2label, label2id=label2id))
-
-        # parameter search
-        if opt.parallel:
-            best_run = trainer.hyperparameter_search(
-                hp_space=lambda x: {
-                    "learning_rate": tune.choice([0.0000075]),
-                    "num_train_epochs": tune.choice([20, 25, 30]),
-                    "per_device_train_batch_size": tune.choice([32]),
-                },
-                local_dir=opt.ray_result_dir,
-                direction="maximize",
-                backend="ray",
-                n_trials=opt.n_trials,
-                resources_per_trial={'cpu': multiprocessing.cpu_count(), "gpu": torch.cuda.device_count()})
-        else:
-            # https://github.com/facebookresearch/fairseq/issues/2057
-            best_run = trainer.hyperparameter_search(
-                hp_space=lambda x: {
-                    "learning_rate": tune.choice([0.0000075]),
-                    "num_train_epochs": tune.choice([20, 25, 30]),
-                    "per_device_train_batch_size": tune.choice([32]),
-                    # "learning_rate": tune.loguniform(1e-6, 1e-4),
-                    # "num_train_epochs": tune.choice(list(range(1, 6))),
-                    # "per_device_train_batch_size": tune.choice([4, 8, 16, 32, 64]),
-                },
-                local_dir=opt.ray_result_dir,
-                direction="maximize",
-                backend="ray",
-                n_trials=opt.n_trials)
-
-        # finetuning
-        for n, v in best_run.hyperparameters.items():
-            setattr(trainer.args, n, v)
+                output_dir=opt.output_dir,
+                evaluation_strategy="steps",
+                eval_steps=opt.eval_step,
+                load_best_model_at_end=True,
+                learning_rate=0.0000075,
+                num_train_epochs=25,
+                per_device_train_batch_size=32,
+                seed=opt.random_seed),
+            train_dataset=tokenized_datasets[opt.split_train],
+            eval_dataset=tokenized_datasets[opt.split_validation],
+            compute_metrics=compute_metric_search)
         trainer.train()
         trainer.save_model(pj(opt.output_dir, 'best_model'))
         best_model_path = pj(opt.output_dir, 'best_model')
