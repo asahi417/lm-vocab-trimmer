@@ -104,8 +104,8 @@ def main():
             best_run = trainer.hyperparameter_search(
                 hp_space=lambda x: {
                     "learning_rate": tune.choice([0.0000075]),
-                    "num_train_epochs": tune.choice(list(range(20, 30))),
-                    "per_device_train_batch_size": tune.choice([64]),
+                    "num_train_epochs": tune.choice([20, 25, 30]),
+                    "per_device_train_batch_size": tune.choice([32]),
                 },
                 local_dir=opt.ray_result_dir,
                 direction="maximize",
@@ -117,8 +117,8 @@ def main():
             best_run = trainer.hyperparameter_search(
                 hp_space=lambda x: {
                     "learning_rate": tune.choice([0.0000075]),
-                    "num_train_epochs": tune.choice(list(range(20, 30))),
-                    "per_device_train_batch_size": tune.choice([64]),
+                    "num_train_epochs": tune.choice([20, 25, 30]),
+                    "per_device_train_batch_size": tune.choice([32]),
                     # "learning_rate": tune.loguniform(1e-6, 1e-4),
                     # "num_train_epochs": tune.choice(list(range(1, 6))),
                     # "per_device_train_batch_size": tune.choice([4, 8, 16, 32, 64]),
