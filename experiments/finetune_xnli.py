@@ -38,7 +38,7 @@ def main():
     parser.add_argument('-l', '--seq-length', help='', default=256, type=int)
     parser.add_argument('--random-seed', help='', default=42, type=int)
     parser.add_argument('--eval-step', help='', default=50, type=int)
-    parser.add_argument('-t', '--n-trials', default=5, type=int)
+    parser.add_argument('-t', '--n-trials', default=3, type=int)
     parser.add_argument('--num-cpus', default=1, type=int)
     parser.add_argument('--repo-id', default=None, type=str)
     parser.add_argument('--skip-train', action='store_true')
@@ -103,9 +103,9 @@ def main():
         if opt.parallel:
             best_run = trainer.hyperparameter_search(
                 hp_space=lambda x: {
-                    "learning_rate": tune.loguniform(1e-6, 1e-4),
-                    "num_train_epochs": tune.choice(list(range(1, 6))),
-                    "per_device_train_batch_size": tune.choice([4, 8, 16, 32]),
+                    "learning_rate": tune.choice([0.0000075]),
+                    "num_train_epochs": tune.choice(list(range(20, 30))),
+                    "per_device_train_batch_size": tune.choice([64]),
                 },
                 local_dir=opt.ray_result_dir,
                 direction="maximize",
@@ -113,11 +113,15 @@ def main():
                 n_trials=opt.n_trials,
                 resources_per_trial={'cpu': multiprocessing.cpu_count(), "gpu": torch.cuda.device_count()})
         else:
+            # https://github.com/facebookresearch/fairseq/issues/2057
             best_run = trainer.hyperparameter_search(
                 hp_space=lambda x: {
-                    "learning_rate": tune.loguniform(1e-6, 1e-4),
-                    "num_train_epochs": tune.choice(list(range(1, 6))),
-                    "per_device_train_batch_size": tune.choice([4, 8, 16, 32, 64]),
+                    "learning_rate": tune.choice([0.0000075]),
+                    "num_train_epochs": tune.choice(list(range(20, 30))),
+                    "per_device_train_batch_size": tune.choice([64]),
+                    # "learning_rate": tune.loguniform(1e-6, 1e-4),
+                    # "num_train_epochs": tune.choice(list(range(1, 6))),
+                    # "per_device_train_batch_size": tune.choice([4, 8, 16, 32, 64]),
                 },
                 local_dir=opt.ray_result_dir,
                 direction="maximize",
