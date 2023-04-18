@@ -30,7 +30,7 @@ def main():
     parser.add_argument('--split-test', help='', default='test', type=str)
     parser.add_argument('-l', '--seq-length', help='', default=256, type=int)
     parser.add_argument('--random-seed', help='', default=42, type=int)
-    parser.add_argument('--eval-step', help='', default=1000, type=int)
+    parser.add_argument('--eval-step', help='', default=10000, type=int)
     parser.add_argument('--repo-id', default=None, type=str)
     parser.add_argument('--skip-train', action='store_true')
     parser.add_argument('--skip-eval', action='store_true')
@@ -85,6 +85,7 @@ def main():
                 output_dir=opt.output_dir,
                 evaluation_strategy="steps",
                 eval_steps=opt.eval_step,
+                save_steps=opt.eval_step,
                 load_best_model_at_end=True,
                 learning_rate=0.0000075,
                 num_train_epochs=25,
