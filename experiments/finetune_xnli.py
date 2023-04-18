@@ -14,6 +14,7 @@ from huggingface_hub import Repository
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer, EarlyStoppingCallback
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')
+os.environ["WANDB_DISABLED"] = "true"
 
 
 def main():
