@@ -67,9 +67,10 @@ def show_table(table):
 def download(filename, url):
     try:
         with open(f'metric_files/{filename}') as f_reader:
-            return json.load(f_reader)['test']
+            return json.load(f_reader)
     except Exception:
         pass
+    print(url)
     with open(f'metric_files/{filename}', "wb") as f_reader:
         r = requests.get(url)
         f_reader.write(r.content)
@@ -78,59 +79,71 @@ def download(filename, url):
 
 
 full_data = []
-for lm in ["xlm-roberta-base", "xlm-v-base"]:
-    for la in sorted(max_vocab[lm].keys()):
+for task in ["tweet-sentiment", "xnli"]:
+    for lm in ["xlm-roberta-base", "xlm-v-base"]:
+        for la in sorted(max_vocab[lm].keys()):
+            if task == 'xnli' and la in ['pt', 'it']:
+                continue
+            data = {"language": la, 'lm': lm, 'param': param_size_full[lm]['full'], 'vocab': param_size_full[lm]['vocab_size'], "type": "No-Trim", "task": task}
+            if task == 'xnli':
+                data.update(download(f"{lm}.{la}.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-{task}-{la}/raw/main/eval.json"))
+            else:
+                data.update(download(f"{lm}.{la}.json", url=f"https://huggingface.co/cardiffnlp/{lm}-{task}-{la}/raw/main/eval.json"))
+            full_data.append(data)
 
-        data = {"language": la, 'lm': lm, 'param': param_size_full[lm]['full'], 'vocab': param_size_full[lm]['vocab_size'], "type": "No-Trim"}
-        data.update(download(f"{lm}.{la}.json", url=f"https://huggingface.co/cardiffnlp/{lm}-tweet-sentiment-{la}/raw/main/eval.json"))
-        full_data.append(data)
+            data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][max_vocab[lm][la]]["full"], 'vocab': max_vocab[lm][la], "type": "Post-FT (FULL)", "task": task}
+            data.update(download(f"{lm}.{la}.post_ft.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-{task}-{la}-trimmed-{la}/raw/main/eval.json"))
+            full_data.append(data)
 
-        data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][max_vocab[lm][la]]["full"], 'vocab': max_vocab[lm][la], "type": "Post-FT (FULL)"}
-        data.update(download(f"{lm}.{la}.post_ft.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-tweet-sentiment-{la}-trimmed-{la}/raw/main/eval.json"))
-        full_data.append(data)
+            data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][max_vocab[lm][la]]["full"], 'vocab': max_vocab[lm][la], "type": "Pre-FT (FULL)", "task": task}
+            data.update(download(f"{lm}.{la}.pre_ft.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-trimmed-{la}-{task}-{la}/raw/main/eval.json"))
+            full_data.append(data)
+            for v_size in [5000, 10000, 15000, 30000, 60000]:
+                try:
+                    data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][v_size]['full'], 'vocab': param_size_trimmed[lm][v_size]['vocab_size'], "type": "Pre-FT", "task": task}
+                    data.update(download(f"{lm}.{la}.pre_ft.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-trimmed-{la}-{v_size}-{task}-{la}/raw/main/eval.json"))
+                    full_data.append(data)
+                except Exception:
+                    print(f"https://huggingface.co/vocabtrimmer/{lm}-trimmed-{la}-{v_size}-{task}-{la}/raw/main/eval.json")
+                    pass
+                try:
+                    data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][v_size]['full'], 'vocab': v_size, "type": "Post-FT", "task": task}
+                    data.update(download(f"{lm}.{la}.pre_ft.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-{task}-{la}-trimmed-{la}-{v_size}/raw/main/eval.json"))
+                    full_data.append(data)
+                except Exception:
+                    print(f"https://huggingface.co/vocabtrimmer/{lm}-{task}-{la}-trimmed-{la}-{v_size}/raw/main/eval.json")
+                    pass
 
-        data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][max_vocab[lm][la]]["full"], 'vocab': max_vocab[lm][la], "type": "Pre-FT (FULL)"}
-        data.update(download(f"{lm}.{la}.pre_ft.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-trimmed-{la}-tweet-sentiment-{la}/raw/main/eval.json"))
-        full_data.append(data)
-        for v_size in [5000, 10000, 15000, 30000, 60000]:
-            try:
-                data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][v_size]['full'], 'vocab': param_size_trimmed[lm][v_size]['vocab_size'], "type": "Pre-FT"}
-                data.update(download(f"{lm}.{la}.pre_ft.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-trimmed-{la}-{v_size}-tweet-sentiment-{la}/raw/main/eval.json"))
-                full_data.append(data)
-            except Exception:
-                print(f"https://huggingface.co/vocabtrimmer/{lm}-trimmed-{la}-{v_size}-tweet-sentiment-{la}/raw/main/eval.json")
-                pass
-            try:
-                data = {"language": la, 'lm': lm, 'param': param_size_trimmed[lm][v_size]['full'], 'vocab': v_size, "type": "Post-FT"}
-                data.update(download(f"{lm}.{la}.pre_ft.{v_size}.json", url=f"https://huggingface.co/vocabtrimmer/{lm}-tweet-sentiment-{la}-trimmed-{la}-{v_size}/raw/main/eval.json"))
-                full_data.append(data)
-            except Exception:
-                print(f"https://huggingface.co/vocabtrimmer/{lm}-tweet-sentiment-{la}-trimmed-{la}-{v_size}/raw/main/eval.json")
-                pass
-
+df = pd.DataFrame(full_data)
+df.to_csv("result/sentiment_xnli.csv", index=False)
 
 def emphasize(x, y):
     return f"\textbf{{{x}}}" if x == y else str(x)
 
-df = pd.DataFrame(full_data)
-df.to_csv("result/sentiment.csv", index=False)
+df = pd.read_csv("result/sentiment_xnli.csv")
 output = []
 for lm, g in df.groupby('lm'):
-    for la, _g in g.groupby("language"):
+    for la, __g in g.groupby("language"):
         v_size = max_vocab[str(lm)][str(la)]
         tmp = {"lm": "XLM-R" if lm == "xlm-roberta-base" else "XLM-V", "language": str(la).upper(), "vocab": int(v_size/1000), "model_size": round((param_size_trimmed[str(lm)][v_size]["full"]/param_size_full[str(lm)]["full"]) * 100, 1)}
-        _g = _g[["FULL" in t or t == 'No-Trim' for t in _g['type']]]
-        _g.index = _g.pop('type')
-        _g = _g.sort_index()
-        _g = (_g[["eval_f1_macro"]] * 100).round(1)
-        tmp.update({t: emphasize(i.values[0], _g["eval_f1_macro"].max()) for t, i in _g.iterrows()})
+        for task, _g in __g.groupby('task'):
+            _g = _g[["FULL" in t or t == 'No-Trim' for t in _g['type']]]
+            _g.index = _g.pop('type')
+            _g = _g.sort_index()
+            if task == "xnli":
+                _g = (_g[["eval_accuracy"]] * 100).round(1)
+                tmp.update({f"{t}.{task}": emphasize(i.values[0], _g["eval_accuracy"].max()) for t, i in _g.iterrows()})
+            else:
+                _g = (_g[["eval_f1_macro"]] * 100).round(1)
+                tmp.update({f"{t}.{task}": emphasize(i.values[0], _g["eval_f1_macro"].max()) for t, i in _g.iterrows()})
         output.append(tmp)
 output = pd.DataFrame(output)
 print(show_table(output.to_latex(index=False, escape=False)))
 
-
-for lm in ["xlm-roberta-base", "xlm-v-base"]:
-    df_ = df[df['lm'] == lm]
+input()
+for task, df_task in df.groupby('task'):
+    # for lm in ["xlm-roberta-base", "xlm-v-base"]:
+    df_ = df_task[df_task['lm'] == "xlm-roberta-base"]
     for vt_type in ['Pre-FT', 'Post-FT']:
         output = []
         g = df_[[i in [vt_type, "No-Trim"] for i in df_['type']]]
@@ -145,5 +158,7 @@ for lm in ["xlm-roberta-base", "xlm-v-base"]:
         df_tmp.index = [i.upper() for i in df_tmp.index]
         df_tmp.columns.name = ""
         df_tmp.columns = [f"{c}K" for c in df_tmp.columns]
-        print(lm, vt_type)
+
+        print()
+        print(task, vt_type)
         print(show_table(df_tmp.to_latex(escape=False)))

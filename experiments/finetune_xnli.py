@@ -35,6 +35,9 @@ def main():
     parser.add_argument('--repo-id', default=None, type=str)
     parser.add_argument('--skip-train', action='store_true')
     parser.add_argument('--skip-eval', action='store_true')
+    parser.add_argument('--lr', help='', default=0.000015, type=float)
+    parser.add_argument('--batch', help='', default=32, type=int)
+    parser.add_argument('--epoch', help='', default=15, type=int)
     opt = parser.parse_args()
 
     # setup data
@@ -88,9 +91,9 @@ def main():
                 eval_steps=opt.eval_step,
                 save_steps=opt.eval_step,
                 load_best_model_at_end=True,
-                learning_rate=0.000015,
-                num_train_epochs=15,
-                per_device_train_batch_size=32,
+                learning_rate=opt.lr,
+                num_train_epochs=opt.epoch,
+                per_device_train_batch_size=opt.batch,
                 seed=opt.random_seed),
             train_dataset=tokenized_datasets[opt.split_train],
             eval_dataset=tokenized_datasets[opt.split_validation],
