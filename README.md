@@ -31,16 +31,7 @@ The evaluation is performed over four NLP tasks (two generative and two classifi
 LMs in seven languages. Finally, we show that this methodology can keep the best of both monolingual and multilingual 
 worlds by keeping a small size as monolingual models without the need for specifically retraining them, and even 
 limiting potentially harmful social biases. Please check those experimental results as wel as the technical detail in our paper,
-["TBA"](tba).
-
-### Pre/Post-VT
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/vt_type.png" width="400">
-  <br><em> Figure 2: The ratio of the embedding matrix to the number of entire model parameters for each of multilingual LMs and the embedding matrix after VT with top-60 vocabulary. </em>
-</p>
-
-Assuming we want to fine-tune   
+["TBA"](paper-link).
 
 
 ## Get Started 🚀
@@ -51,10 +42,20 @@ pip install vocabtrimmer
 ```
 
 ## Vocabulary Trimming with `vocabtrimmer`
+<p align="center">
+  <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/vt_type.png" width="400">
+  <br><em> Figure 3: Comparisons of Pre-FT vs Post-FT in an example of fine-tuning on a task in French. </em>
+</p>
 
-### Command-line
+As a default, VT relies on [mC4](https://huggingface.co/datasets/vocabtrimmer/mc4_validation), to find a set of language-specific 
+tokens and the frequency of each token.
+The practical usage of VT is to apply it to a multilingual LM before fine-tuning (pre-FT VT) or after fine-tuning (post-FT VT). 
+Both should work well in general, but post-VT is more robust and it suits, if you already have a model as no additional training is required. 
+Otherwise, pre-FT VT would be an option as it could reduce the time to fine-tune the model.
+
+### VT in Command-Line
 The `vocabtrimmer` provides following command-line interface to trim a multilingual LM vocabulary.
-```shell
+```bash
 vocabtrimmer-trimming -m MODEL -l LANGUAGE -p PATH_TO_SAVE [-v TARGET_VOCAB_SIZE] [--repo-id REPO_ID] 
 
 arguments:
@@ -65,13 +66,22 @@ arguments:
   --repo-id, [optinoal] huggingface repo id to push after trimming
 ```
 Following command trims the vocabulary of `google/mt5-small` to French with top-60k vocabulary. 
-```shell
+```bash
 vocabtrimmer-trimming -m "google/mt5-small" -l "fr" -v 60000 -p "ckpts/mt5-small-trimmed-fr-60000"                       
 ```
 The vocabulary size of multilingual LMs is usually 250k (XLM-R, mBART, mT5), and we recommend setting the target vocabulary size to 60k, 
 the effective vocabulary size. Less vocabulary size than 60k may cause performance degradation, but can retain the original performance in some cases 
-(check our [paper](paper-link)).
-If the target vocabulary size is not specified, it will use whole vocabulary that is appeared in the
+(check our [paper](paper-link)). If the target vocabulary size is not specified, it will use whole vocabulary that is appeared in the mC4 dataset or the specified target corpus.
 
-### Python
+### VT in Python
+The `vocabtrimmer` provides an API to trim a multilingual LM via python.
+Following command trims the vocabulary of `google/mt5-small` to French with top-60k vocabulary.
+```python
+import vocabtrimmer
 
+trimmer = vocabtrimmer.VocabTrimmer("google/mt5-small")
+trimmer.trim_vocab(
+    path_to_save="ckpts/mt5-small-trimmed-fr-60000",
+    language="fr",
+    target_vocab_size=60000)
+```

@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 with open('README.md', 'r') as f:
     readme = f.read()
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 NAME = 'vocabtrimmer'
 LICENSE = 'MIT License'
 setup(
     name=NAME,
-    packages=find_packages(exclude=['tests', 'misc', 'asset', "experiments", "hf_operations", "metric_files"]),
+    packages=find_packages(exclude=['assets','tests', 'misc', 'asset', "experiments", "hf_operations", "metric_files"]),
     version=VERSION,
     license=LICENSE,
     description='Trimming vocabulary of pre-trained multilingual language models to language localization.',
