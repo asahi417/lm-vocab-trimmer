@@ -7,25 +7,37 @@
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/overview.png" width="400">
-  <br><em> Figure 1: Three distinct QAG approaches. </em>
+  <br><em> Figure 1: An illustration of vocabulary trimming to Korean and French. </em>
 </p>
 
 
 ***Vocabulary Trimming (VT)*** is a model compression technique, which reduces a multilingual LM vocabulary to a 
-target language by deleting irrelevant tokens from its vocabulary. 
-LM to build monolingual LMs in any language covered by the multilingual LM. 
-This library assumes that you want to use or already fine-tuned a multilingual LM in a few specific languages, 
-and other languages are not needed to be covered by the LM anymore.
-Then, `vocabtrimmer` remove those tokens in the out-of-scope languages from the embedding matrix,
+target language by deleting irrelevant tokens from its vocabulary (see Figure 1).
+The motivation behind VT is that a multilingual LM has a huge vocabulary to cover all languages, that results in a large model size (see Figure 2). 
+However, we don't need the bulk of those vocabularies, when we fine-tune the multilingual LM on a monolingual task in practice. Hence, 
+we can delete such un-used vocabularies to reduce the model size.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/pie.png" width="400">
+  <br><em> Figure 2: The ratio of the embedding matrix to the number of entire model parameters for each of multilingual LMs and the embedding matrix after VT with top-60 vocabulary. </em>
+</p>
+
+In theory, VT can compress any existing multilingual LM to build monolingual LMs in any language covered by the multilingual LM. 
+In our experiments, we show that VT can retain the original performance of the multilingual LM, while being smaller in size
+(in general around 50% of the original vocabulary size is enough) than the original multilingual LM. 
+The evaluation is performed over four NLP tasks (two generative and two classification tasks) among four widely used multilingual
+LMs in seven languages. Finally, we show that this methodology can keep the best of both monolingual and multilingual 
+worlds by keeping a small size as monolingual models without the need for specifically retraining them, and even 
+limiting potentially harmful social biases. Please check those experimental results as wel as the technical detail in our paper,
+["TBA"](tba).
 
 
-### Motivation
+## Get Started 
 
-pie.png
-The bottleneck of a multilingual LM is its huge multilingual 
-vocabulary, that results in a large model size and a high computational cost (eg. mT5 )
-the input and the output embedding matrix .
 
-Multilingual LMs ([mT5](https://arxiv.org/abs/2010.11934), [mBART](https://arxiv.org/abs/2001.08210), [XLM-R](https://arxiv.org/abs/1911.02116), etc) are
 
- is a pythob
+<p align="center">
+  <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/pie.png" width="400">
+  <br><em> Figure 2: The ratio of the embedding matrix to the number of entire model parameters for each of multilingual LMs and the embedding matrix after VT with top-60 vocabulary. </em>
+</p>
+
