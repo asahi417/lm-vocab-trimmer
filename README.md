@@ -31,7 +31,7 @@ The evaluation is performed over four NLP tasks (two generative and two classifi
 LMs in seven languages. Finally, we show that this methodology can keep the best of both monolingual and multilingual 
 worlds by keeping a small size as monolingual models without the need for specifically retraining them, and even 
 limiting potentially harmful social biases. Please check those experimental results as wel as the technical detail in our paper,
-["TBA"](paper-link).
+["TBA"](paper-link). To reproduce the results in our paper, please check [here](https://github.com/asahi417/lm-vocab-trimmer/tree/main/experiments).
 
 
 ## Get Started 🚀
