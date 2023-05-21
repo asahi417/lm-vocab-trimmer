@@ -40,6 +40,8 @@ limiting potentially harmful social biases. Please check those experimental resu
   <br><em> Figure 2: The ratio of the embedding matrix to the number of entire model parameters for each of multilingual LMs and the embedding matrix after VT with top-60 vocabulary. </em>
 </p>
 
+Assuming we want to fine-tune   
+
 
 ## Get Started 🚀
 
@@ -48,4 +50,28 @@ Let's install `lmqg` via pip first.
 pip install vocabtrimmer
 ```
 
+## Vocabulary Trimming with `vocabtrimmer`
+
+### Command-line
+The `vocabtrimmer` provides following command-line interface to trim a multilingual LM vocabulary.
+```shell
+vocabtrimmer-trimming -m MODEL -l LANGUAGE -p PATH_TO_SAVE [-v TARGET_VOCAB_SIZE] [--repo-id REPO_ID] 
+
+arguments:
+  -m, --model, model name on huggingface or path to local model
+  -l, --language, language code of tokens to keep
+  -p, --path-to-save, directly to save model
+  -v, --target-vocab-size, [optinoal] vocab size after mining
+  --repo-id, [optinoal] huggingface repo id to push after trimming
+```
+Following command trims the vocabulary of `google/mt5-small` to French with top-60k vocabulary. 
+```shell
+vocabtrimmer-trimming -m "google/mt5-small" -l "fr" -v 60000 -p "ckpts/mt5-small-trimmed-fr-60000"                       
+```
+The vocabulary size of multilingual LMs is usually 250k (XLM-R, mBART, mT5), and we recommend setting the target vocabulary size to 60k, 
+the effective vocabulary size. Less vocabulary size than 60k may cause performance degradation, but can retain the original performance in some cases 
+(check our [paper](paper-link)).
+If the target vocabulary size is not specified, it will use whole vocabulary that is appeared in the
+
+### Python
 
