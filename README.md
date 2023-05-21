@@ -3,7 +3,7 @@
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/vocabtrimmer.svg)](https://pypi.python.org/pypi/vocabtrimmer/)
 [![PyPI status](https://img.shields.io/pypi/status/vocabtrimmer.svg)](https://pypi.python.org/pypi/vocabtrimmer/)
 
-# Vocabulary Trimming: An Efficient Multilingual Language Model Compression
+# Vocabulary Trimming
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/overview.png" width="400">
@@ -13,14 +13,16 @@
 
 ***Vocabulary Trimming (VT)*** is a model compression technique, which reduces a multilingual LM vocabulary to a 
 target language by deleting irrelevant tokens from its vocabulary (see Figure 1).
-The motivation behind VT is that a multilingual LM has a huge vocabulary to cover all languages, that results in a large model size (see Figure 2). 
-However, we don't need the bulk of those vocabularies, when we fine-tune the multilingual LM on a monolingual task in practice. Hence, 
-we can delete such un-used vocabularies to reduce the model size.
+This repository contains a python-library `vocabtrimmer`, that remove irrelevant tokens from a multilingual LM vocabulary for the target language. 
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/pie.png" width="400">
   <br><em> Figure 2: The ratio of the embedding matrix to the number of entire model parameters for each of multilingual LMs and the embedding matrix after VT with top-60 vocabulary. </em>
 </p>
+
+The motivation behind VT is that a multilingual LM has a huge vocabulary to cover all languages, that results in a large model size (see Figure 2). 
+However, we don't need the bulk of those vocabularies, when we fine-tune the multilingual LM on a monolingual task in practice. Hence, 
+we can delete such un-used vocabularies to reduce the model size.
 
 In theory, VT can compress any existing multilingual LM to build monolingual LMs in any language covered by the multilingual LM. 
 In our experiments, we show that VT can retain the original performance of the multilingual LM, while being smaller in size
@@ -31,13 +33,19 @@ worlds by keeping a small size as monolingual models without the need for specif
 limiting potentially harmful social biases. Please check those experimental results as wel as the technical detail in our paper,
 ["TBA"](tba).
 
-
-## Get Started 
-
-
+### Pre/Post-VT
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/pie.png" width="400">
+  <img src="https://raw.githubusercontent.com/asahi417/lm-vocab-trimming/master/assets/vt_type.png" width="400">
   <br><em> Figure 2: The ratio of the embedding matrix to the number of entire model parameters for each of multilingual LMs and the embedding matrix after VT with top-60 vocabulary. </em>
 </p>
+
+
+## Get Started 🚀
+
+Let's install `lmqg` via pip first.
+```shell
+pip install vocabtrimmer
+```
+
 
