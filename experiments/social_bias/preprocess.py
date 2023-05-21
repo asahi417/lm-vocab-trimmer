@@ -61,7 +61,7 @@ def preprocess_instances(path):
 
 def main(args):
 
-    path = 'data/Equity-Evaluation-Corpus.csv'
+    path = 'Equity-Evaluation-Corpus.csv'
     data = preprocess_instances(path)
   
     with open(args.output, 'w') as fw:
