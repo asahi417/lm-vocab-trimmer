@@ -52,6 +52,7 @@ tokens and the frequency of each token.
 The practical usage of VT is to apply it to a multilingual LM before fine-tuning (pre-FT VT) or after fine-tuning (post-FT VT). 
 Both should work well in general, but post-VT is more robust and it suits, if you already have a model as no additional training is required. 
 Otherwise, pre-FT VT would be an option as it could reduce the time to fine-tune the model.
+See the comparison of pre/post-FT VT in our [paper](paper-link).
 
 ### VT in Command-Line
 The `vocabtrimmer` provides following command-line interface to trim a multilingual LM vocabulary.
@@ -84,4 +85,11 @@ trimmer.trim_vocab(
     path_to_save="ckpts/mt5-small-trimmed-fr-60000",
     language="fr",
     target_vocab_size=60000)
+```
+
+## Citation
+Please cite following paper if you use any resource and see the code to reproduce the model if needed.
+
+```
+TBA
 ```
