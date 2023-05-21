@@ -241,4 +241,9 @@ do
 done
 
 
+# monolingual
 
+lmqg-train-search -m "t5-small" -d "lmqg/qg_squad" --lr 5e-05 1e-04 5e-04 1e-03 --epoch-partial 5 -e 15 --label-smoothing 0.15 --language "en" --n-max-config 1 -b 32 -g 2 -c "lmqg_output/qa/t5-small-squad" -i 'paragraph_question' -o 'answer' --low-cpu-mem-usage
+lmqg-eval -m "lmqg_output/qa/t5-small-squad/best_model" -e "lmqg_output/qa/t5-small-squad/best_model/eval" -d "lmqg/qg_squad" -i 'paragraph_question' -o 'answer'
+lmqg-eval-qa -m "lmqg_output/qa/t5-small-squad/best_model" -e "lmqg_output/qa/t5-small-squad/best_model/eval" -d "lmqg/qg_squad" --language "en"
+lmqg-push-to-hf -m "lmqg_output/qa/t5-small-squad/best_model" -a "t5-small-squad-qa" -o "lmqg"

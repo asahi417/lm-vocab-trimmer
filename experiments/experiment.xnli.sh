@@ -79,5 +79,9 @@ LM="facebook/xlm-v-base"
 LM_ALIAS="xlm-v-base"
 LA="en"
 vocabtrimmer-trimming -m "${LM}" -l "${LA}" -p "ckpts/${LM_ALIAS}-trimmed-${LA}" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}"
-python experiments/finetune_xnli.py --lr 0.00005 -n "${LA}" -m "ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-xnli-${LA}-1" # --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-xnli-${LA}"
 python experiments/finetune_xnli.py --lr 0.00001 --epoch 20 -n "${LA}" -m "ckpts/${LM_ALIAS}-trimmed-${LA}" -o "ckpts/${LM_ALIAS}-trimmed-${LA}-xnli-${LA}-2" # --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-xnli-${LA}"
+python experiments/finetune_xnli.py --skip-train --skip-eval -o "ckpts/${LM_ALIAS}-trimmed-${LA}-xnli-${LA}-2" --repo-id "vocabtrimmer/${LM_ALIAS}-trimmed-${LA}-xnli-${LA}"
+
+
+# mono-lingual
+python experiments/finetune_xnli.py -n "en" -m "roberta-base" -o "ckpts/roberta-base-en" --repo-id "vocabtrimmer/roberta-base-xnli-en"
