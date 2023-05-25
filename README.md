@@ -11,7 +11,7 @@
 </p>
 
 
-***Vocabulary Trimming (VT)*** is a model compression technique, which reduces a multilingual LM vocabulary to a 
+[***Vocabulary Trimming (VT)***](https://arxiv.org/abs/2305.15020) is a model compression technique, which reduces a multilingual LM vocabulary to a 
 target language by deleting irrelevant tokens from its vocabulary (see Figure 1).
 This repository contains a python-library `vocabtrimmer`, that remove irrelevant tokens from a multilingual LM vocabulary for the target language. 
 
@@ -31,7 +31,7 @@ The evaluation is performed over four NLP tasks (two generative and two classifi
 LMs in seven languages. Finally, we show that this methodology can keep the best of both monolingual and multilingual 
 worlds by keeping a small size as monolingual models without the need for specifically retraining them, and even 
 limiting potentially harmful social biases. Please check those experimental results as wel as the technical detail in our paper,
-["TBA"](paper-link). To reproduce the results in our paper, please check [here](https://github.com/asahi417/lm-vocab-trimmer/tree/main/experiments).
+["An Efficient Multilingual Language Model Compression through Vocabulary Trimming, 2023,"](https://arxiv.org/abs/2305.15020). To reproduce the results in our paper, please check [here](https://github.com/asahi417/lm-vocab-trimmer/tree/main/experiments).
 
 
 ## Get Started 🚀
@@ -52,7 +52,7 @@ tokens and the frequency of each token.
 The practical usage of VT is to apply it to a multilingual LM before fine-tuning (pre-FT VT) or after fine-tuning (post-FT VT). 
 Both should work well in general, but post-VT is more robust and it suits, if you already have a model as no additional training is required. 
 Otherwise, pre-FT VT would be an option as it could reduce the time to fine-tune the model.
-See the comparison of pre/post-FT VT in our [paper](paper-link).
+See the comparison of pre/post-FT VT in our [paper]([paper-link](https://arxiv.org/abs/2305.1502)).
 
 ### VT in Command-Line
 The `vocabtrimmer` provides following command-line interface to trim a multilingual LM vocabulary.
@@ -91,5 +91,12 @@ trimmer.trim_vocab(
 Please cite following paper if you use any resource and see the code to reproduce the model if needed.
 
 ```
-TBA
+@misc{ushio2023efficient,
+      title={An Efficient Multilingual Language Model Compression through Vocabulary Trimming}, 
+      author={Asahi Ushio and Yi Zhou and Jose Camacho-Collados},
+      year={2023},
+      eprint={2305.15020},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
 ```
