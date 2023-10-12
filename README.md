@@ -33,7 +33,7 @@ worlds by keeping a small size as monolingual models without the need for specif
 limiting potentially harmful social biases. Please check those experimental results as wel as the technical detail in our paper,
 ["An Efficient Multilingual Language Model Compression through Vocabulary Trimming, 2023,"](https://arxiv.org/abs/2305.15020). To reproduce the results in our paper, please check [here](https://github.com/asahi417/lm-vocab-trimmer/tree/main/experiments).
 
-**NEWS:** Our paper ["An Efficient Multilingual Language Model Compression through Vocabulary Trimming, 2023,"](https://arxiv.org/abs/2305.15020) got accepted by findings of [EACL 2024](https://2024.eacl.org/).
+**NEWS:** Our paper ["An Efficient Multilingual Language Model Compression through Vocabulary Trimming, 2023,"](https://arxiv.org/abs/2305.15020) got accepted by findings of [EMNLP 2023](https://2023.emnlp.org/).
 
 ## Get Started 🚀
 
@@ -92,12 +92,16 @@ trimmer.trim_vocab(
 Please cite following paper if you use any resource and see the code to reproduce the model if needed.
 
 ```
-@misc{ushio2023efficient,
-      title={An Efficient Multilingual Language Model Compression through Vocabulary Trimming}, 
-      author={Asahi Ushio and Yi Zhou and Jose Camacho-Collados},
-      year={2023},
-      eprint={2305.15020},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+
+@inproceedings{ushio2023efficient,
+    title = "An Efficient Multilingual Language Model Compression through Vocabulary Trimming",
+    author = "Ushio, Asahi  and
+        Zhou, Yi  and
+        Camacho-Collados, Jose",
+    booktitle = "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP): Findings",
+    month = Dec,
+    year = "2023",
+    address = "",
+    publisher = "Association for Computational Linguistics",
 }
 ```
