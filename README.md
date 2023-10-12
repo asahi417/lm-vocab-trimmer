@@ -33,6 +33,7 @@ worlds by keeping a small size as monolingual models without the need for specif
 limiting potentially harmful social biases. Please check those experimental results as wel as the technical detail in our paper,
 ["An Efficient Multilingual Language Model Compression through Vocabulary Trimming, 2023,"](https://arxiv.org/abs/2305.15020). To reproduce the results in our paper, please check [here](https://github.com/asahi417/lm-vocab-trimmer/tree/main/experiments).
 
+**NEWS:** Our paper ["An Efficient Multilingual Language Model Compression through Vocabulary Trimming, 2023,"](https://arxiv.org/abs/2305.15020) got accepted by findings of [EACL 2024](https://2024.eacl.org/).
 
 ## Get Started 🚀
 
