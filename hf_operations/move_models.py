@@ -1,11 +1,10 @@
 from pprint import pprint
 import os
-from huggingface_hub import ModelFilter, HfApi
+from huggingface_hub import HfApi
 
 api = HfApi()
-filt = ModelFilter(author='vocabtrimmer')
-models = api.list_models(filter=filt)
-models_filtered = [i.modelId for i in models if 'xlm-roberta-base' in i.modelId]
+models = api.list_models(author='vocabtrimmer')
+models_filtered = [i.id for i in models if 'xlm-roberta-base' in i.id]
 models_filtered = [i for i in models_filtered if "sentiment" in i and "trimmed" not in i]
 
 pprint(models_filtered)
