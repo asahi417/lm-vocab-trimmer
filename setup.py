@@ -34,7 +34,11 @@ setup(
         "requests",
         "transformers",
         "sentencepiece",
-        "tokenizers"
+        "tokenizers",
+        "numpy",
+        "pandas",
+        "datasets",
+        "evaluate"
     ],
     python_requires='>=3.6',
     entry_points={
