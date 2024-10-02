@@ -10,7 +10,8 @@ from os.path import join as pj
 import numpy as np
 import pandas as pd
 import torch
-from datasets import load_dataset, load_metric
+from datasets import load_dataset
+from evaluate import load
 from huggingface_hub import Repository
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer, EarlyStoppingCallback
 
@@ -61,10 +62,10 @@ def main():
     )
 
     # setup metrics
-    metric_accuracy = load_metric("accuracy")
-    metric_f1 = load_metric("f1")
-    metric_pre = load_metric("precision")
-    metric_re = load_metric("recall")
+    metric_accuracy = load("accuracy")
+    metric_f1 = load("f1")
+    metric_pre = load("precision")
+    metric_re = load("recall")
 
     def compute_metric_search(eval_pred):
         logits, labels = eval_pred
