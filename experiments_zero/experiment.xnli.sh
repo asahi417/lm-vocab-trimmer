@@ -1,0 +1,1 @@
+python experiments_zero/finetune_xnli.py -m "roberta-base" -n "en" -o "ckpts/roberta-base.xnli-en" --repo-id "asahi417/roberta-base.xnli-en"
