@@ -39,8 +39,8 @@ def main():
     parser.add_argument('--skip-train', action='store_true')
     parser.add_argument('--skip-eval', action='store_true')
     parser.add_argument('--lr', help='', default=0.000001, type=float)
-    parser.add_argument('--batch', help='', default=256, type=int)
-    parser.add_argument('--epoch', help='', default=5, type=int)
+    parser.add_argument('-b', '--batch', help='', default=256, type=int)
+    parser.add_argument('-e', '--epoch', help='', default=5, type=int)
     opt = parser.parse_args()
 
     # setup data
@@ -114,15 +114,15 @@ def main():
         trainer.train()
         trainer.save_model(best_model_path)
     if not opt.skip_eval:
-        model = AutoModelForSequenceClassification.from_pretrained(best_model_path, **model_config)
-        trainer = Trainer(
-            model=model,
+        eval_config = dict(
+            model=AutoModelForSequenceClassification.from_pretrained(best_model_path, **model_config),
             args=TrainingArguments(output_dir=opt.output_dir, evaluation_strategy="no", seed=opt.random_seed),
             train_dataset=tokenized_datasets[opt.split_train],
-            eval_dataset=tokenized_datasets[opt.split_test],
             compute_metrics=compute_metric_all
         )
-        metric = trainer.evaluate()
+        metric_test = Trainer(**eval_config, eval_dataset=tokenized_datasets[opt.split_test]).evaluate()
+        metric_valid = Trainer(**eval_config, eval_dataset=tokenized_datasets[opt.split_validation]).evaluate()
+        metric = {"test": metric_test, "validation": metric_valid}
         logging.info(json.dumps(metric, indent=4))
         with open(metric_file, 'w') as f:
             json.dump(metric, f)
