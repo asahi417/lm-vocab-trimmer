@@ -20,7 +20,7 @@ def batch_iterator(dataset):
 
 reference_tokenizer = AutoTokenizer.from_pretrained(opt.reference_model)
 new_tokenizer = reference_tokenizer.train_new_from_iterator(
-    iterator=batch_iterator(load_dataset(opt.dataset, opt.dataset_config, split=opt.dataset_split)),
+    batch_iterator(load_dataset(opt.dataset, opt.dataset_config, split=opt.dataset_split)),
     vocab_size=reference_tokenizer.vocab_size,
 )
 new_tokenizer.save_pretrained(opt.output_dir)
