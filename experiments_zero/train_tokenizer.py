@@ -1,18 +1,28 @@
-from tokenizers import Tokenizer, decoders, models, normalizers, pre_tokenizers, trainers
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import argparse
+from transformers import AutoTokenizer
+from datasets import load_dataset
 
-dataset = "vocabtrimmer/mc4_validation"
-dataset_config = "zh"
-reference_model = "roberta-base"
+parser = argparse.ArgumentParser(description='Tokenizer training')
+parser.add_argument('-b', '--batch-size', help='', default=1_000, type=int)
+parser.add_argument('-r', '--reference-model', help='', default='roberta-base', type=str)
+parser.add_argument('-d', '--dataset', help='', default='vocabtrimmer/mc4_validation', type=str)
+parser.add_argument('--dataset-config', help='', default='zh', type=str)
+parser.add_argument('--dataset-split', help='', default='validation', type=str)
+parser.add_argument('--dataset-column', help='', default='text', type=str)
+parser.add_argument('--output-dir', required=True, type=str)
+parser.add_argument('--repo-id', default=None, type=str)
+opt = parser.parse_args()
 
-reference_tokenizer = AutoTokenizer.from_pretrained(reference_model)
-tokenizer = Tokenizer(models.Unigram())
-tokenizer.normalizer = normalizers.NFKC()
-tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel()
-tokenizer.decoder = decoders.ByteLevel()
-tokenizer.train_from_iterator()
-# trainer = trainers.UnigramTrainer(
-#     vocab_size=reference_tokenizer.vocab_size,
-#     initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),
-#     special_tokens=tokenizer.all_special_tokens,
-# )
+
+def batch_iterator(dataset):
+    for i in range(0, len(dataset), opt.batch_size):
+        yield dataset[i: i + opt.batch_size][opt.dataset_column]
+
+reference_tokenizer = AutoTokenizer.from_pretrained(opt.reference_model)
+new_tokenizer = reference_tokenizer.train_new_from_iterator(
+    iterator=batch_iterator(load_dataset(opt.dataset, opt.dataset_config, split=opt.dataset_split)),
+    vocab_size=reference_tokenizer.vocab_size,
+)
+new_tokenizer.save_pretrained(opt.output_dir)
+if opt.repo_id:
+    new_tokenizer.push_to_hub(opt.repo_id)
