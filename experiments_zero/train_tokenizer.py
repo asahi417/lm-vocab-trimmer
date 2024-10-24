@@ -9,7 +9,7 @@ parser.add_argument('-d', '--dataset', help='', default='vocabtrimmer/mc4_valida
 parser.add_argument('--dataset-config', help='', default='zh', type=str)
 parser.add_argument('--dataset-split', help='', default='validation', type=str)
 parser.add_argument('--dataset-column', help='', default='text', type=str)
-parser.add_argument('--output-dir', required=True, type=str)
+parser.add_argument('-o', '--output-dir', required=True, type=str)
 parser.add_argument('--repo-id', default=None, type=str)
 opt = parser.parse_args()
 
